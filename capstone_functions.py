@@ -30,7 +30,7 @@ def check_unique(col, df, dropna=False):
     
     unique_vals = pd.DataFrame()
     unique_vals['count'] = pd.Series(df[col].value_counts(dropna=dropna))
-    unique_vals['%'] = pd.Series(df[col].value_counts(normalize=True, dropna=dropna))
+    unique_vals['%'] = pd.Series(round(df[col].value_counts(normalize=True, dropna=dropna)*100, 2))
     
     return unique_vals
 
@@ -38,11 +38,62 @@ def check_unique(col, df, dropna=False):
 
 
 
-def plot_count(feature, hue, data, show_legend=True):
+
+def plot_count(variable, data, rotation=0, figsize=(10,7)):
+    
+    """Takes in a variable/ column name and the DataFrame containing the column
+    and returns a countplot for that variable with counts in descending order.
+    """
+    
+    import matplotlib.pyplot as plt
+    import seaborn as sns    
+    
+    plt.figure(figsize=figsize)
+    ax = sns.countplot(x=data[variable],
+                       order=data[variable].value_counts().index,
+                       palette='nipy_spectral')
+    
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
+    ax.set_title('{} Counts'.format(variable.title()), fontsize=16, weight='bold')
+    ax.set_xlabel('{}'.format(variable), fontsize=14, weight='bold')
+    ax.set_ylabel('Count', fontsize=14, weight='bold')
+    
+    return ax
+
+
+
+
+
+def compare_age_distr(df1, df1_label, df2, df2_label):
+    
+    
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    
+    fig,ax = plt.subplots(figsize=(10,7))
+    
+    sns.histplot(df1['birth_age'], stat='density', color='r',
+             label=df1_label, alpha=0.6, ax=ax)
+    sns.histplot(df2['birth_age'], stat='density',
+             label=df2_label, alpha=0.6, ax=ax)
+    
+    ax.set_title('Current Age Distributions:\n{} vs. {}'.format(
+        df1_label,df2_label), fontsize=16, weight='bold')
+    ax.set_xlabel('Age', fontsize=14, weight='bold')
+    ax.set_ylabel('Density', fontsize=14, weight='bold')
+    ax.set_xlim(15,115)
+    ax.legend()
+    
+    return fig,ax
+
+
+
+
+
+def count_by_method(feature, hue, data, show_legend=True):
     
     """Takes in a feature/ column name, the DataFrame containing the column, and the target variable 
-    (default for this notebook is 'Gen_2020') and returns a barplot for that feature grouped by
-    voting method.
+    and returns a barplot for that feature grouped by voting method.
     """
     
     import matplotlib.pyplot as plt
