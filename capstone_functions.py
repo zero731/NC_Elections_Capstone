@@ -64,7 +64,7 @@ def plot_count(variable, data, rotation=0, figsize=(10,7)):
 
 
 
-def compare_age_distr(df1, df1_label, df2, df2_label):
+def compare_age_distr(df1, df1_label, df2, df2_label, stat='density'):
     
     
     import matplotlib.pyplot as plt
@@ -72,15 +72,15 @@ def compare_age_distr(df1, df1_label, df2, df2_label):
     
     fig,ax = plt.subplots(figsize=(10,7))
     
-    sns.histplot(df1['birth_age'], stat='density', color='r',
+    sns.histplot(df1['birth_age'], stat=stat, color='r',
              label=df1_label, alpha=0.6, ax=ax)
-    sns.histplot(df2['birth_age'], stat='density',
+    sns.histplot(df2['birth_age'], stat=stat,
              label=df2_label, alpha=0.6, ax=ax)
     
     ax.set_title('Current Age Distributions:\n{} vs. {}'.format(
         df1_label,df2_label), fontsize=16, weight='bold')
     ax.set_xlabel('Age', fontsize=14, weight='bold')
-    ax.set_ylabel('Density', fontsize=14, weight='bold')
+    ax.set_ylabel('{}'.format(stat.title()), fontsize=14, weight='bold')
     ax.set_xlim(15,115)
     ax.legend()
     
