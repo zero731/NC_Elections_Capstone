@@ -135,6 +135,21 @@ def basic_px_hist(df, year, col, title=None,
                                         'Election Day', 'Other']})
         labels.update({'Gen_{}'.format(str(year)): 'Voting Method'})
         
+    
+    if col == 'vote_cat':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Mail': 'blue',
+            'Other': 'aqua'
+        }
+        cat_orders.update({'vote_cat': ['Early', 'No Vote',
+                                        'Election Day', 'Mail',
+                                        'Other']})
+        labels.update({'vote_cat': 'Voting Method'})
+        
+        
         
     if col == 'race_grp':
         color_map = {
@@ -248,6 +263,18 @@ def basic_pie(df, year, col, title=None,
         }
         labels.update({'Gen_{}'.format(str(year)): 'Voting Method'})
         
+    
+    if col == 'vote_cat':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Mail': 'blue',
+            'Other': 'aqua'
+        }
+        labels.update({'vote_cat': 'Voting Method'})
+    
+        
     if col == 'race_grp':
         color_map = {
             'White': 'forestgreen',
@@ -348,6 +375,21 @@ def grp_px_hist(df, year, group_col_1, group_col_2, title=None, barmode='group',
         cat_orders.update({'Gen_{}'.format(str(year)): ['Early', 'No Vote',
                                         'Election Day', 'Other']})
         labels.update({'Gen_{}'.format(str(year)): 'Voting Method'})
+        
+        
+    if group_col_2 == 'vote_cat':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Mail': 'blue',
+            'Other': 'aqua'
+        }
+    if (group_col_1 == 'vote_cat') | (group_col_2 == 'vote_cat'):
+        cat_orders.update({'vote_cat': ['Early', 'No Vote',
+                                        'Election Day', 'Mail',
+                                        'Other']})
+        labels.update({'vote_cat': 'Voting Method'})
         
         
     if group_col_2 == 'race_grp':
@@ -479,6 +521,18 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
             'Other': 'aqua'
         }
         labels.update({'Gen_{}'.format(str(year)): 'Voting Method'})
+        
+        
+    if group_col_2 == 'vote_cat':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Mail': 'blue',
+            'Other': 'aqua'
+        }
+        labels.update({'vote_cat': 'Voting Method'})
+        
         
     if group_col_2 == 'race_grp':
         color_map = {
@@ -640,8 +694,110 @@ def eval_classifier(clf, X_test, y_test, model_descr='',
 
 
 
-def fit_grid_clf(clf, params, X_train, y_train, X_test, y_test,
-                 model_descr='', score='accuracy', cv=5):
+def eval_bin_clf(clf, X_test, y_test, model_descr='',
+                    target_labels=['No Vote', 'Vote'],
+                    cmap='Blues', normalize='true', save=False, fig_name=None):
+    
+    """Given an sklearn binary classification model (already fit to training data), test features, and test labels,
+       displays sklearn.metrics classification report, confusion matrix, and ROC curve. A description of the model 
+       can be provided to model_descr to customize the title of the classification report.
+       
+       
+    Args:
+        clf (estimator): Fitted classifier with a binary target.
+        X_test (series or array): Subset of X data used for testing.
+        y_test (series or array): Subset of y data used for testing.
+        model_descr (str): A description of the model for customizing plot title.
+        target_labels (list of strings, default=['No Vote', 'Vote']): List of class labels 
+            used for formatting tick labels.
+        cmap (str, default='Blues'): Specifies a color map that can be used by sklearn's plot_confusion_matrix.
+        normalize (str, {'true', 'pred', 'all', None}, default='true'): Whether to normalize the
+        confusion matrix over the true (rows), predicted (columns) conditions or all the population. 
+        If None, confusion matrix will not be normalized.
+        save (bool, default=False): Whether to save the returned figure.
+        fig_name (str, optional): What to name the file if the image is being saved.
+    
+    Returns:
+        display: Sklearn classification report and confusion matrix.
+    
+    Example:
+        >>> eval_classifier(clf=my_model, X_test, y_test, model_descr='My Model',
+                    target_labels=['No Vote', 'Vote'],
+                    cmap='Blues', normalize='true', save=true, fig_name='my_model_eval')
+    
+    """
+    
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import classification_report, plot_confusion_matrix, plot_roc_curve
+    
+    
+    fig_filepath = 'Figures/'
+    
+    ## get model predictions
+    y_hat_test = clf.predict(X_test)
+    
+    
+    ## Classification Report
+    report_title = 'Classification Report: {}'.format(model_descr)
+    divider = ('-----' * 11) + ('-' * (len(model_descr) - 31))
+    report_table = classification_report(y_test, y_hat_test,
+                                         target_names=target_labels)
+    print(divider, report_title, divider, report_table, divider, divider, '\n', sep='\n')
+    
+    
+    ## Make Subplots for Figures
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,6))
+    
+    ## Confusion Matrix
+    plot_confusion_matrix(clf, X_test, y_test, 
+                                  display_labels=target_labels, 
+                                  normalize=normalize, cmap=cmap, ax=axes[0])
+    
+    axes[0].set_title('Confusion Matrix', fontdict={'fontsize': 18,'fontweight': 'bold'})
+    axes[0].set_xlabel(axes[0].get_xlabel(),
+                       fontdict={'fontsize': 12,'fontweight': 'bold'})
+    axes[0].set_ylabel(axes[0].get_ylabel(),
+                       fontdict={'fontsize': 12,'fontweight': 'bold'})
+    axes[0].set_xticklabels(axes[0].get_xticklabels(),
+                       fontdict={'fontsize': 10,'fontweight': 'bold'})
+    axes[0].set_yticklabels(axes[0].get_yticklabels(), 
+                       fontdict={'fontsize': 10,'fontweight': 'bold'})
+    
+    
+    ## ROC Curve
+    plot_roc_curve(clf, X_test, y_test, ax=axes[1])
+    # plot line that demonstrates probable success when randomly guessing labels
+    axes[1].plot([0,1],[0,1], ls='--', color='r')
+    
+    axes[1].set_title('ROC Curve', 
+                      fontdict={'fontsize': 18,'fontweight': 'bold'})
+    axes[1].set_xlabel(axes[1].get_xlabel(), 
+                      fontdict={'fontsize': 12,'fontweight': 'bold'})
+    axes[1].set_ylabel(axes[1].get_ylabel(), 
+                      fontdict={'fontsize': 12,'fontweight': 'bold'})
+    
+    
+    if save:
+        plt.savefig(fig_filepath+fig_name, bbox_inches = "tight")
+    
+    fig.tight_layout()
+    plt.show()
+
+    return fig, axes
+
+
+
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
+
+
+
+def fit_grid_clf(clf, params, X_train, y_train, X_test, y_test, bin_target=False,
+                 model_descr='', score='accuracy', cv=5,
+                 target_labels=['Early', 'Election Day', 'No Vote']):
     
     """Given an sklearn classification model, hyperparameter grid, X and y training data, 
        and a GridSearchCV scoring metric (default is 'accuracy', which is the default metric for 
@@ -700,7 +856,10 @@ def fit_grid_clf(clf, params, X_train, y_train, X_test, y_test,
     print('Best Parameters:')
     print(grid.best_params_)
     print('\n')
-    eval_classifier(grid.best_estimator_, X_test, y_test, model_descr)
+    if bin_target:
+        eval_bin_clf(grid.best_estimator_, X_test, y_test, model_descr)
+    else:
+        eval_classifier(grid.best_estimator_, X_test, y_test, model_descr, target_labels)
     
     return grid
 
