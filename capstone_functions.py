@@ -35,8 +35,11 @@ def check_unique(col, df, dropna=False):
     return unique_vals
 
 
+#################################################################################
+#################################################################################
 
-
+#################################################################################
+#################################################################################
 
 
 def plot_count(variable, data, rotation=0, figsize=(10,7)):
@@ -61,6 +64,12 @@ def plot_count(variable, data, rotation=0, figsize=(10,7)):
     return ax
 
 
+
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
 
 
 
@@ -88,38 +97,462 @@ def compare_age_distr(df1, df1_label, df2, df2_label, stat='density'):
 
 
 
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
 
 
-def count_by_method(feature, hue, data, show_legend=True):
+
+def basic_px_hist(df, year, col, title=None,
+                template='seaborn'):
     
-    """Takes in a feature/ column name, the DataFrame containing the column, and the target variable 
-    and returns a barplot for that feature grouped by voting method.
-    """
+    import pandas as pd
+    import plotly.express as px
     
-    import matplotlib.pyplot as plt
-    import seaborn as sns
+    cat_orders = {}
+    labels = {}
     
-    plt.figure(figsize=(8,6))
-    fig = sns.countplot(x=feature,
-                        palette='nipy_spectral',
-                        hue=hue,
-                        data=data)
-    fig.set_title('Voting Method vs {}'.format(feature), fontsize=16, weight='bold')
-    fig.set_xlabel('Voting Method', fontsize=14, weight='bold')
-    fig.set_ylabel(feature.title(), fontsize=14, weight='bold')
+    if col == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+        cat_orders.update({'party_grp': ['Dem', 'Rep', 'Other']})
+        labels.update({'party_grp': 'Party'})
     
-    if show_legend==False:
-        fig.get_legend().remove()
+    
+    if col == 'Gen_{}'.format(str(year)):
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Other': 'aqua'
+        }
+        cat_orders.update({'Gen_{}'.format(str(year)): ['Early', 'No Vote',
+                                        'Election Day', 'Other']})
+        labels.update({'Gen_{}'.format(str(year)): 'Voting Method'})
+        
+        
+    if col == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+        cat_orders.update({'race_grp': ['White',
+                                        'Black',
+                                        'Undesig.',
+                                        'Other']})
+        labels.update({'race_grp': 'Race'})
+    
+    
+    if col == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+        cat_orders.update({'gender_code': ['F', 'M', 'U']})
+        labels.update({'gender_code': 'Gender'})
+        
+        
+    if col == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+        cat_orders.update({'birth_reg_other': ['South',
+                                               'Missing',
+                                               'Northeast',
+                                               'Midwest',
+                                               'Other',
+                                               'West']})
+        labels.update({'birth_reg_other': 'Birth Region'})
+    
+    
+    if col == 'drivers_lic':
+        color_map = {
+            'Y': 'green',
+            'N': 'crimson'
+        }
+        cat_orders.update({'drivers_lic': ['Y', 'N']})
+        labels.update({'drivers_lic': 'Drivers License'})
+        
+    
+    if col == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926'
+        }
+        cat_orders.update({'city_grp': ['Monroe',
+                                        'Waxhaw',
+                                        'Indian Trail',
+                                        'Matthews',
+                                        'Other']})
+        labels.update({'city_grp': 'City'})
+        
+    
+    fig = px.histogram(df, x=col, color=col,
+                       color_discrete_map=color_map,
+                       title=title, 
+                       category_orders=cat_orders,
+                       labels=labels,
+                       template=template
+                      )
     
     return fig
 
 
 
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
+
+
+
+def basic_pie(df, year, col, title=None,
+                  template='seaborn'):
+    
+    import pandas as pd
+    import plotly.express as px
+    
+    labels={}
+    
+    if col == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+        labels.update({'party_grp': 'Party'})
+    
+    if col == 'Gen_{}'.format(str(year)):
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Other': 'aqua'
+        }
+        labels.update({'Gen_{}'.format(str(year)): 'Voting Method'})
+        
+    if col == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+        labels.update({'race_grp': 'Race'})
+    
+    if col == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+        labels.update({'gender_code': 'Gender'})
+        
+    if col == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+        labels.update({'birth_reg_other': 'Birth Region'})
+    
+    
+    if col == 'drivers_lic':
+        color_map = {
+            'Y': 'green',
+            'N': 'crimson'
+        }
+        labels.update({'drivers_lic': 'Drivers License'})
+        
+    
+    if col == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926'
+        }
+        labels.update({'city_grp': 'City'})
+    
+    
+    grouped_df = df.groupby([col]).size().to_frame().reset_index()
+    grouped_df.rename(columns={0: 'Count'}, inplace=True)
+    
+    fig = px.pie(grouped_df, values='Count', names=col,
+                 title=title, color=col,
+                 color_discrete_map=color_map,
+                 template=template,
+                 labels=labels)
+    
+    return fig
+
+
+
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
+
+
+
+def grp_px_hist(df, year, group_col_1, group_col_2, title=None, barmode='group',
+                template='seaborn'):
+    
+    import pandas as pd
+    import plotly.express as px
+    
+    cat_orders = {}
+    labels = {}
+    
+    if group_col_2 == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+    if (group_col_1 == 'party_grp') | (group_col_2 == 'party_grp'):
+        cat_orders.update({'party_grp': ['Dem', 'Rep', 'Other']})
+        labels.update({'party_grp': 'Party'})
+    
+    
+    if group_col_2 == 'Gen_{}'.format(str(year)):
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Other': 'aqua'
+        }
+    if (group_col_1 == 'Gen_{}'.format(str(year))) | (group_col_2 == 'Gen_{}'.format(str(year))):
+        cat_orders.update({'Gen_{}'.format(str(year)): ['Early', 'No Vote',
+                                        'Election Day', 'Other']})
+        labels.update({'Gen_{}'.format(str(year)): 'Voting Method'})
+        
+        
+    if group_col_2 == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+    if (group_col_1 == 'race_grp') | (group_col_2 == 'race_grp'):
+        cat_orders.update({'race_grp': ['White',
+                                        'Black',
+                                        'Undesig.',
+                                        'Other']})
+        labels.update({'race_grp': 'Race'})
+    
+    
+    if group_col_2 == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+    if (group_col_1 == 'gender_code') | (group_col_2 == 'gender_code'):
+        cat_orders.update({'gender_code': ['F', 'M', 'U']})
+        labels.update({'gender_code': 'Gender'})
+        
+        
+    if group_col_2 == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+    if (group_col_1 == 'birth_reg_other') | (group_col_2 == 'birth_reg_other'):
+        cat_orders.update({'birth_reg_other': ['South',
+                                               'Missing',
+                                               'Northeast',
+                                               'Midwest',
+                                               'Other',
+                                               'West']})
+        labels.update({'birth_reg_other': 'Birth Region'})
+    
+    
+    if group_col_2 == 'drivers_lic':
+        color_map = {
+            'Y': 'green',
+            'N': 'crimson'
+        }
+    if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
+        cat_orders.update({'drivers_lic': ['Y', 'N']})
+        labels.update({'drivers_lic': 'Drivers License'})
+        
+    
+    if group_col_2 == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926'
+        }
+    if (group_col_1 == 'city_grp') | (group_col_2 == 'city_grp'):
+        cat_orders.update({'city_grp': ['Monroe',
+                                        'Waxhaw',
+                                        'Indian Trail',
+                                        'Matthews',
+                                        'Other']})
+        labels.update({'city_grp': 'City'})
+    
+    
+    if group_col_1 == 'birth_age_adj':
+        labels.update({'birth_age_adj': 'Age'})
+        fig = px.histogram(df, x=group_col_1, color=group_col_2,
+                       color_discrete_map=color_map, barmode=barmode, 
+                       title=title, 
+                       category_orders=cat_orders,
+                       labels=labels,
+                       template=template,
+                       nbins=50
+                      )
+        
+    
+    else:
+        fig = px.histogram(df, x=group_col_1, color=group_col_2,
+                       color_discrete_map=color_map, barmode=barmode, 
+                       title=title, 
+                       category_orders=cat_orders,
+                       labels=labels,
+                       template=template
+                      )
+    
+    return fig
+
+
+
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
+
+
+
+def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
+                  template='seaborn'):
+    
+    import pandas as pd
+    import plotly.express as px
+    
+    labels={}
+    
+    if group_col_2 == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+        labels.update({'party_grp': 'Party'})
+    
+    if group_col_2 == 'Gen_{}'.format(str(year)):
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Other': 'aqua'
+        }
+        labels.update({'Gen_{}'.format(str(year)): 'Voting Method'})
+        
+    if group_col_2 == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+        labels.update({'race_grp': 'Race'})
+    
+    if group_col_2 == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+        labels.update({'gender_code': 'Gender'})
+        
+    if group_col_2 == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+        labels.update({'birth_reg_other': 'Birth Region'})
+    
+    
+    if group_col_2 == 'drivers_lic':
+        color_map = {
+            'Y': 'green',
+            'N': 'crimson'
+        }
+        labels.update({'drivers_lic': 'Drivers License'})
+        
+    
+    if group_col_2 == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926'
+        }
+        labels.update({'city_grp': 'City'})
+    
+    
+    grouped_df = df.groupby([group_col_1,
+                             group_col_2]).size().to_frame().reset_index()
+    grouped_df.rename(columns={0: 'Count'}, inplace=True)
+    filtered_df = grouped_df.loc[grouped_df[group_col_1]==col_1_cat]
+    
+    fig = px.pie(filtered_df, values='Count', names=group_col_2,
+                 title=title, color=group_col_2,
+                 color_discrete_map=color_map,
+                 template=template,
+                 labels=labels)
+    
+    return fig
+
+
+
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
 
 
 
 def eval_classifier(clf, X_test, y_test, model_descr='',
-                    target_labels=['Hate Speech', 'Offensive', 'Neither'],
+                    target_labels=['Early', 'Election Day', 'No Vote'],
                     cmap='Blues', normalize='true', save=False, fig_name=None):
     
     """Given an sklearn classification model (already fit to training data), test features, and test labels,
@@ -132,7 +565,7 @@ def eval_classifier(clf, X_test, y_test, model_descr='',
         X_test (series or array): Subset of X data used for testing.
         y_test (series or array): Subset of y data used for testing.
         model_descr (str): A description of the model for customizing plot title.
-        target_labels (list of strings, default=['Hate Speech', 'Offensive', 'Neither']): List of class labels 
+        target_labels (list of strings, default=['Early', 'Election Day', 'No Vote']): List of class labels 
             used for formatting tick labels.
         cmap (str, default='Blues'): Specifies a color map that can be used by sklearn's plot_confusion_matrix.
         normalize (str, {'true', 'pred', 'all', None}, default='true'): Whether to normalize the
@@ -146,7 +579,7 @@ def eval_classifier(clf, X_test, y_test, model_descr='',
     
     Example:
         >>> eval_classifier(clf=my_model, X_test, y_test, model_descr='My Model',
-                    target_labels=['Hate Speech', 'Offensive', 'Neither'],
+                    target_labels=['Early', 'Election Day', 'No Vote'],
                     cmap='Blues', normalize='true', save=true, fig_name='my_model_eval')
     
     """
@@ -198,6 +631,86 @@ def eval_classifier(clf, X_test, y_test, model_descr='',
     return fig, axes
 
 
+
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
+
+
+
+def fit_grid_clf(clf, params, X_train, y_train, X_test, y_test,
+                 model_descr='', score='accuracy', cv=5):
+    
+    """Given an sklearn classification model, hyperparameter grid, X and y training data, 
+       and a GridSearchCV scoring metric (default is 'accuracy', which is the default metric for 
+       GridSearchCV), fits a grid search of the specified parameters on the training data and 
+       returns the grid object. Function also takes in X_test and y_test to get predictions and 
+       evaluate model performance on test data. Prints out parameters of the best estimator as well 
+       as its classification report and confusion matrix. A description of the model can be provided
+       to model_descr to customize the title of the classification report.
+       
+    Args:
+        clf (estimator): Fitted classifier.
+        params (dict): Dictionary with parameters names (`str`) as keys and lists of 
+            parameter settings to try as values.
+        X_train (series or array): Subset of X data used for training.
+        y_train (series or array): Subset of y data used for training.
+        X_test (series or array): Subset of X data used for testing.
+        y_test (series or array): Subset of y data used for testing.
+        model_descr (str): A description of the model for customizing plot title.
+        score (str, default='accuracy'): A string indicating a scoring method compatible with 
+            sklearn.model_selection's GridSearchCV.
+    
+    Returns:
+        grid: Fitted GridSearchCV object
+    
+    Example:
+        >>> param_grid = {'param_name_1':[(1,1),(1,2),(1,3)],
+                          'param_name_2':[0.005, 2, 3],
+                         }
+        >>> fit_grid_clf(clf=my_model, params=param_grid, X_train, y_train, X_test, y_test,
+                 model_descr='My Model', score='accuracy')
+    
+    """
+    
+    from sklearn.model_selection import GridSearchCV
+    import datetime as dt
+    from tzlocal import get_localzone
+    
+    
+    start = dt.datetime.now(tz=get_localzone())
+    fmt= "%m/%d/%y - %T %p"
+    
+    print('---'*20)    
+    print(f'***** Grid Search Started at {start.strftime(fmt)}')
+    print('---'*20)
+    print()
+    
+    grid = GridSearchCV(clf, params, scoring=score, cv=cv, n_jobs=-1)
+    grid.fit(X_train, y_train)
+    
+    end = dt.datetime.now(tz=get_localzone())
+    
+    print(f'\n***** Training Completed at {end.strftime(fmt)}')
+    print(f"\n***** Total Training Time: {end-start}")
+    print('\n')
+    
+    print('Best Parameters:')
+    print(grid.best_params_)
+    print('\n')
+    eval_classifier(grid.best_estimator_, X_test, y_test, model_descr)
+    
+    return grid
+
+
+
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
 
 
 
@@ -253,6 +766,11 @@ def plot_feat_importance(clf, clf_step_name, vec_step_name, model_title='', save
 
 
 
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
 
 
 
