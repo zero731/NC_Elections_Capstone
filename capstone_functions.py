@@ -114,6 +114,21 @@ def basic_px_hist(df, year, col, title=None,
     cat_orders = {}
     labels = {}
     
+    
+    
+    if col == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millenial': 'gold',
+            'GenZ': 'coral'
+        }
+        cat_orders.update({'party_grp': ['GenZ', 'Millenial', 'GenX',
+                                         'Boomer', 'Greatest']})
+        labels.update({'gen_grp': 'Generation'})
+    
+    
     if col == 'party_grp':
         color_map = {
             'Dem': 'blue',
@@ -246,6 +261,18 @@ def basic_pie(df, year, col, title=None,
     
     labels={}
     
+    
+    if col == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millenial': 'gold',
+            'GenZ': 'coral'
+        }
+        labels.update({'gen_grp': 'Generation'})
+    
+    
     if col == 'party_grp':
         color_map = {
             'Dem': 'blue',
@@ -352,6 +379,21 @@ def grp_px_hist(df, year, group_col_1, group_col_2, title=None, barmode='group',
     
     cat_orders = {}
     labels = {}
+    
+    
+    if group_col_2 == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millenial': 'gold',
+            'GenZ': 'coral'
+        }
+    if (group_col_1 == 'gen_grp') | (group_col_2 == 'gen_grp'):
+        cat_orders.update({'gen_grp': ['GenZ', 'Millenial', 'GenX',
+                                         'Boomer', 'Greatest']})
+        labels.update({'gen_grp': 'Generation'})
+    
     
     if group_col_2 == 'party_grp':
         color_map = {
@@ -504,6 +546,18 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
     import plotly.express as px
     
     labels={}
+    
+    
+    if group_col_2 == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millenial': 'gold',
+            'GenZ': 'coral'
+        }
+        labels.update({'gen_grp': 'Generation'})
+    
     
     if group_col_2 == 'party_grp':
         color_map = {
@@ -873,10 +927,11 @@ def fit_grid_clf(clf, params, X_train, y_train, X_test, y_test, bin_target=False
 
 
 
-def plot_feat_importance(clf, clf_step_name, vec_step_name, model_title='', save=False, fig_name=None):
+def plot_feat_importance(clf, clf_step_name, feature_names,
+                         model_title='', save=False, fig_name=None):
     
     """Takes in an sklearn classifier already fit to training data, the name of the step for that model
-       in the modeling pipeline, the vectorizer step name, and optionally a title describing the model. 
+       in the modeling pipeline, and optionally a title describing the model. 
        Returns a horizontal barplot showing the top 20 most important features in descending order.
          
     Args:
@@ -892,8 +947,8 @@ def plot_feat_importance(clf, clf_step_name, vec_step_name, model_title='', save
             20 most important features.
     
     Example:
-        >>> plot_feat_importance(clf=my_model, clf_step_name='clf', vec_step_name='vec',
-                                 model_title='My Model', save=True, fig_name='my_model_feat_import')
+        >>> plot_feat_importance(clf=my_model, clf_step_name='clf', feature_names=feature_names,
+        model_title='My Model', save=True, fig_name='my_model_feat_import')
     
     """
 
@@ -905,9 +960,6 @@ def plot_feat_importance(clf, clf_step_name, vec_step_name, model_title='', save
     
     feature_importances = (
         clf.named_steps[clf_step_name].feature_importances_)
-    
-    feature_names = (
-        clf.named_steps[vec_step_name].vocabulary_) 
     
     importance = pd.Series(feature_importances, index=feature_names)
     plt.figure(figsize=(8,6))
