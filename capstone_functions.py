@@ -121,11 +121,11 @@ def basic_px_hist(df, year, col, title=None,
             'Greatest-Silent': 'orchid',
             'Boomer': 'dodgerblue',
             'GenX': 'mediumspringgreen',
-            'Millenial': 'gold',
+            'Millennial': 'gold',
             'GenZ': 'coral'
         }
-        cat_orders.update({'party_grp': ['GenZ', 'Millenial', 'GenX',
-                                         'Boomer', 'Greatest']})
+        cat_orders.update({'gen_grp': ['GenZ', 'Millennial', 'GenX',
+                                         'Boomer', 'Greatest-Silent']})
         labels.update({'gen_grp': 'Generation'})
     
     
@@ -267,7 +267,7 @@ def basic_pie(df, year, col, title=None,
             'Greatest-Silent': 'orchid',
             'Boomer': 'dodgerblue',
             'GenX': 'mediumspringgreen',
-            'Millenial': 'gold',
+            'Millennial': 'gold',
             'GenZ': 'coral'
         }
         labels.update({'gen_grp': 'Generation'})
@@ -386,12 +386,12 @@ def grp_px_hist(df, year, group_col_1, group_col_2, title=None, barmode='group',
             'Greatest-Silent': 'orchid',
             'Boomer': 'dodgerblue',
             'GenX': 'mediumspringgreen',
-            'Millenial': 'gold',
+            'Millennial': 'gold',
             'GenZ': 'coral'
         }
     if (group_col_1 == 'gen_grp') | (group_col_2 == 'gen_grp'):
-        cat_orders.update({'gen_grp': ['GenZ', 'Millenial', 'GenX',
-                                         'Boomer', 'Greatest']})
+        cat_orders.update({'gen_grp': ['GenZ', 'Millennial', 'GenX',
+                                         'Boomer', 'Greatest-Silent']})
         labels.update({'gen_grp': 'Generation'})
     
     
@@ -553,7 +553,7 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
             'Greatest-Silent': 'orchid',
             'Boomer': 'dodgerblue',
             'GenX': 'mediumspringgreen',
-            'Millenial': 'gold',
+            'Millennial': 'gold',
             'GenZ': 'coral'
         }
         labels.update({'gen_grp': 'Generation'})
