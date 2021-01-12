@@ -985,102 +985,107 @@ def plot_feat_importance(clf, clf_step_name, feature_names,
 
 
 
-def plot_coefficients(clf, clf_step_name, vec_step_name,
-                      class_label, model_title='', top_features=10,
-                      save=False, fig_name=None):
-    
-    """Takes in an sklearn classifier already fit to training data, the name of the step for that model
-       in the modeling pipeline, the vectorizer step name, a class label, and optionally a title describing the model. 
-       Returns a horizontal barplot showing the top 20 most important features by coefficient weight (10 most 
-       positive and 10 most negative).
-       
-    Args:
-        clf (estimator): An sklearn Pipeline with a vectorizer steps and final step is a fitted classifier.
-        clf_step_name (str): The name given to the classifier step of the pipe.
-        vec_step_name (str): The name given to the vectorizer step of the pipe.
-        class_label (int): Integer representing numerically encoded class of interest.
-        model_title (str): A description of the model for customizing plot title.
-        top_features (int, default=10): Number of top positive and top negative coefficients to plot
-            (so default of 10 returns bar plot with 20 bars total).
-        save (bool, default=False): Whether to save the returned figure.
-        fig_name (str, optional): What to name the file if the image is being saved.
-    
-    Returns:
-        figure: Matplotlib.pyplot bar plot figure showing the coefficient weights for the top
-            20 most important features.
-    
-    Example:
-        >>> plot_coefficients(clf=my_model, clf_step_name='clf', vec_step_name='vec',
-                                 class_label=0, model_title='My Model', top_features=10,
-                                 save=True, fig_name='my_model_coeffs')
-    
-    """
+def multi_shap_summ(multi_shap_vals, X_train, label):
     
     import pandas as pd
-    import numpy as np
-    import matplotlib.pyplot as plt
+    import shap
+    
+    ## Load JS visualization code to notebook
+    shap.initjs()
+    
+    ## Create dict for mapping class labels
+    label_dict = {0: 'Early',
+                  1: 'Election Day',
+                  2: 'No Vote'}
+    
+    ## Format and add description above plot
+    print('\n')
+    print('******************** {} Class ********************'.format(
+        label_dict[label])
+         )
+    
+    ## Plot summary plot for specified class label
+    shap.summary_plot(multi_shap_vals[label], X_train)
     
     
-    fig_filepath = 'Figures/'
     
-    ## Get the coefficients for the specified class label
-    feature_coefs = (
-        clf.named_steps[clf_step_name].coef_[class_label])
-    
-    ## Get the vocabulary from the fit vectorizer
-    feature_names = (
-        clf.named_steps[vec_step_name].vocabulary_) 
-    # Create a version of the vocab dict with keys and values swapped
-    vocab_swap = (
-        {value:key for key, value in feature_names.items()}) 
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
 
     
-    ## Store the top 10 positive coefficients and their indices
-    pos_10_index = (
-        np.argsort(clf.named_steps[clf_step_name].coef_[class_label])[-top_features:])
-    pos_10_coefs = (
-        np.sort(clf.named_steps[clf_step_name].coef_[class_label])[-top_features:])
-    
-    ## Store the top 10 negative coefficients and their indices
-    neg_10_index = (
-        np.argsort(clf.named_steps[clf_step_name].coef_[class_label])[:top_features])
-    neg_10_coefs = (
-        np.sort(clf.named_steps[clf_step_name].coef_[class_label])[:top_features])
-    
-    ## Combine top positive and negative into one list for indices and one for coefs
-    top_20_index = list(pos_10_index) + list(neg_10_index)
-    top_20_coefs = list(pos_10_coefs) + list(neg_10_coefs)
 
-    
-    ## Get list of top predictive words and use it as index for series of coef values
-    top_words = []
+def multi_shap_force(clf, clf_step_name, index,
+                 X_train_df, y_train,
+                 explainer, multi_shap_vals,
+                 classes='all'):
 
-    for i in top_20_index:
-        top_words.append(vocab_swap[i])
+    import pandas as pd
+    import shap
 
-    top_20 = pd.Series(top_20_coefs, index=top_words)
-    
-    
-    ## Create plot
-    plt.figure(figsize=(8,6))
-    
-    # Color code positive coefs blue and negative red
-    colors = ['blue' if c < 0 else 'red' for c in top_20]
-    
-    # Adjust title according to specified class code
-    class_dict = {0: 'Hate Speech', 1: 'Offensive Language', 2: 'Neither'}
-    title_class = class_dict[class_label]
-    
-    fig = top_20.sort_values().plot(kind='barh', color=colors)
-    fig.set_title('Top Words for Predicting {} - {}'.format(title_class, model_title),
-                  fontsize=18, fontweight='bold')
-    plt.xticks(fontsize=12, fontweight='bold')
-    plt.yticks(fontsize=12)
-    
-    if save:
-        plt.savefig(fig_filepath+fig_name+'_'+title_class.replace(' ', '_'), bbox_inches = "tight")
-    
-    plt.show()
-    
-    return fig
+    ## Load JS visualization code to notebook
+    shap.initjs()
 
+    ## Create dict for mapping class labels
+    label_dict = {0: 'Early',
+                  1: 'Election Day',
+                  2: 'No Vote'}
+
+    ## Store the model's prediction and ground truth label for that index
+    pred = int(clf.named_steps[clf_step_name].predict(X_train_df.iloc[index,:]))
+    true_label = pd.Series(y_train).iloc[index]
+
+    ## Print model prediction for ith row of training set
+    print('Model Prediction: {} - {}'.format(pred,
+                                             label_dict[pred]))
+
+    ## Print ground truth label ith row of training set
+    print('Ground Truth Label: {} - {}'.format(true_label,
+                                               label_dict[true_label]))
+
+    print()
+
+    if classes == 'all':
+        ## Visualize the ith prediction's explanation for all classes
+        print('Early Vote Class (0)')
+        display(shap.force_plot(explainer.expected_value[0],
+                    multi_shap_vals[0][index],
+                    X_train_df.iloc[index,:]))
+        print()
+
+        print('Election Day Vote Class (1)')
+        display(shap.force_plot(explainer.expected_value[1],
+                    multi_shap_vals[1][index],
+                    X_train_df.iloc[index,:]))
+        print()
+
+        print('No Vote Class (2)')
+        display(shap.force_plot(explainer.expected_value[2],
+                    multi_shap_vals[2][index],
+                    X_train_df.iloc[index,:]))
+
+    elif classes == 'pred':
+        print('Predicted: {} Class {}'.format(label_dict[pred], pred))
+        display(shap.force_plot(explainer.expected_value[pred],
+                                multi_shap_vals[pred][index],
+                                X_train_df.iloc[index,:]))
+
+    elif classes == 'true':
+        print('True: {} Class {}'.format(label_dict[true_label], true_label))
+        display(shap.force_plot(explainer.expected_value[true_label],
+                    multi_shap_vals[true_label][index],
+                    X_train_df.iloc[index,:]))
+
+    elif classes == 'both':
+        print('Predicted: {} Class {}'.format(label_dict[pred], pred))
+        display(shap.force_plot(explainer.expected_value[pred],
+                                multi_shap_vals[pred][index],
+                                X_train_df.iloc[index,:]))
+        print()
+
+        print('True: {} Class {}'.format(label_dict[true_label], true_label))
+        display(shap.force_plot(explainer.expected_value[true_label],
+                    multi_shap_vals[true_label][index],
+                    X_train_df.iloc[index,:]))
