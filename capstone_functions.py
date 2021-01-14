@@ -1089,3 +1089,191 @@ def multi_shap_force(clf, clf_step_name, index,
         display(shap.force_plot(explainer.expected_value[true_label],
                     multi_shap_vals[true_label][index],
                     X_train_df.iloc[index,:]))
+    
+    
+    
+#################################################################################
+#################################################################################
+
+#################################################################################
+#################################################################################
+
+    
+
+def multi_px_hist(df, group_col_1, group_col_2,
+                  facet_feat='year', facet_spacing=0.05,
+                  title=None, barmode='group',
+                  template='seaborn', width=1000, height=450):
+    
+    import pandas as pd
+    import plotly.express as px
+    
+    cat_orders = {'year': [2012, 2016, 2020]}
+    labels = {}
+    
+    
+    if group_col_2 == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millennial': 'gold',
+            'GenZ': 'coral'
+        }
+    if (group_col_1 == 'gen_grp') | (group_col_2 == 'gen_grp'):
+        cat_orders.update({'gen_grp': ['GenZ', 'Millennial', 'GenX',
+                                         'Boomer', 'Greatest-Silent']})
+        labels.update({'gen_grp': 'Generation'})
+    
+    
+    if group_col_2 == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+    if (group_col_1 == 'party_grp') | (group_col_2 == 'party_grp'):
+        cat_orders.update({'party_grp': ['Dem', 'Rep', 'Other']})
+        labels.update({'party_grp': 'Party'})
+    
+    
+    if group_col_2 == 'vote_method_4':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Other': 'aqua'
+        }
+    if (group_col_1 == 'vote_method_4') | (group_col_2 == 'vote_method_4'):
+        cat_orders.update({'vote_method_4': ['Early', 'No Vote',
+                                        'Election Day', 'Other']})
+        labels.update({'vote_method_4': 'Voting Method'})
+        
+        
+    if group_col_2 == 'vote_method_5':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Mail': 'blue',
+            'Other': 'aqua'
+        }
+    if (group_col_1 == 'vote_method_5') | (group_col_2 == 'vote_method_5'):
+        cat_orders.update({'vote_method_5': ['Early', 'No Vote',
+                                        'Election Day', 'Mail',
+                                        'Other']})
+        labels.update({'vote_method_5': 'Voting Method'})
+    
+    
+    if group_col_2 == 'vote_bin':
+        color_map = {
+            'Y': 'blue',
+            'N': 'goldenrod'
+        }
+    if (group_col_1 == 'vote_bin') | (group_col_2 == 'vote_bin'):
+        cat_orders.update({'vote_bin': ['Early', 'No Vote',
+                                        'Election Day', 'Mail',
+                                        'Other']})
+        labels.update({'vote_bin': 'Vote'})
+    
+        
+    if group_col_2 == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+    if (group_col_1 == 'race_grp') | (group_col_2 == 'race_grp'):
+        cat_orders.update({'race_grp': ['White',
+                                        'Black',
+                                        'Undesig.',
+                                        'Other']})
+        labels.update({'race_grp': 'Race'})
+    
+    
+    if group_col_2 == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+    if (group_col_1 == 'gender_code') | (group_col_2 == 'gender_code'):
+        cat_orders.update({'gender_code': ['F', 'M', 'U']})
+        labels.update({'gender_code': 'Gender'})
+        
+        
+    if group_col_2 == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+    if (group_col_1 == 'birth_reg_other') | (group_col_2 == 'birth_reg_other'):
+        cat_orders.update({'birth_reg_other': ['South',
+                                               'Missing',
+                                               'Northeast',
+                                               'Midwest',
+                                               'Other',
+                                               'West']})
+        labels.update({'birth_reg_other': 'Birth Region'})
+    
+    
+    if group_col_2 == 'drivers_lic':
+        color_map = {
+            'Y': 'green',
+            'N': 'crimson'
+        }
+    if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
+        cat_orders.update({'drivers_lic': ['Y', 'N']})
+        labels.update({'drivers_lic': 'Drivers License'})
+        
+    
+    if group_col_2 == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926'
+        }
+    if (group_col_1 == 'city_grp') | (group_col_2 == 'city_grp'):
+        cat_orders.update({'city_grp': ['Monroe',
+                                        'Waxhaw',
+                                        'Indian Trail',
+                                        'Matthews',
+                                        'Other']})
+        labels.update({'city_grp': 'City'})
+    
+    
+    if group_col_1 == 'birth_age_adj':
+        labels.update({'birth_age_adj': 'Age'})
+        fig = px.histogram(df, x=group_col_1, color=group_col_2,
+                           color_discrete_map=color_map, barmode=barmode, 
+                           title=title, facet_col=facet_feat,
+                           category_orders=cat_orders,
+                           labels=labels,
+                           template=template,
+                           width=width, height=height,
+                           facet_col_spacing=facet_spacing,
+                           nbins=50
+                          )
+        
+    
+    else:
+        fig = px.histogram(df, x=group_col_1, color=group_col_2,
+                           color_discrete_map=color_map, barmode=barmode, 
+                           title=title, facet_col=facet_feat,
+                           category_orders=cat_orders,
+                           labels=labels,
+                           template=template,
+                           width=width, height=height,
+                           facet_col_spacing=facet_spacing
+                      )
+    
+    return fig
+
+
