@@ -9,21 +9,22 @@ from plotly.subplots import make_subplots
 ## Import functions created for visualizations
 from plotly_year_functions import *
 
-## Settings for app page
-st.set_page_config(
-    page_title='Union County Elections',
-    layout='centered',
-    initial_sidebar_state='auto'
-)
-
-## Set page title
-st.title('Registered Voter Participation in Union County, North Carolina')
 
 ## Import DataFrames
 gen_elecs_df = pd.read_csv('Data/UC_gen_elecs.gz')
-elec_2020_df = gen_elecs_df.copy().loc[
-    gen_elecs_df['year'] == 2020
-]
+
+
+
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+###### Define functions used for widgets
+##########################################################################
+##########################################################################
+
 
 ## Define function for formatting column names as labels to choose from
 def format_col_names(name):
@@ -75,6 +76,80 @@ def norm_label(arg):
         return 'Percent'
 
 
+
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+###### Define functions used to produce visualizations
+##########################################################################
+##########################################################################
+
+
+
+
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+###### Build dashboard layout and widgets
+##########################################################################
+##########################################################################
+
+## Settings for app page
+st.set_page_config(
+    page_title='Union County Elections',
+    layout='centered',
+    initial_sidebar_state='auto'
+)
+
+## Set page title
+st.title('Registered Voter Participation in Union County, North Carolina')
+
+## Introduction 
+# Define container for the section
+intro = st.beta_container()
+intro.write("")
+intro.markdown(
+    """
+    This dashboard allows you to interactively explore and visualize 
+    trends in registered voter turnout in Union County, NC for the
+    2012, 2016, and 2020 general elections.  
+    """
+)
+
+intro.markdown(
+    """
+    The data used to produce this dashboard were obtained from the
+    North Carolina State Board of Elections (NCSBE). The dataset
+    combines information from voter registration records with voter
+    history data.
+    """
+)
+
+data_note = intro.beta_expander('**Important Note for Interpreting Graphs:')
+data_note.markdown(
+    """
+    When interpreting the raw counts and percentages in the graphs you
+    create, keep in mind the specific population that the data 
+    reflects:\n - **Registered voters** eligible to vote in Union County
+    in the 2020 general election, **NOT** all people in the county who 
+    were legally eligible to register to vote.\n\n - Voters whose 
+    registration status was neither _"Removed"_ nor _"Denied"_  as of 
+    when the data files were obtained from NCSBE on January 4th, 2021. 
+    This may have removed some voters from the 2012 and 2016 datasets 
+    who might have been eligible to vote in those elections, but were 
+    not eligible in 2020 (the date of voter registration status change is 
+    not made available by NCSBE).\n\n - For the 2012 and 2016 elections,
+    the population of registered voters was further filtered based on 
+    registration date and age to remove people who did not register in 
+    time in a certain year or were not yet old enough to vote.
+    """
+)
 
 
 

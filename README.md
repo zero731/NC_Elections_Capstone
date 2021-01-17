@@ -37,16 +37,16 @@ The data used for this project were obtained from the North Carolina State Board
 In the <a href="https://github.com/zero731/NC_Elections_Capstone/blob/main/Final_Part_I_Merge_Scrub_UC_Data.ipynb"> Part I</a> notebook of my project, I merged the two files (the data used for the current version of this project obtained from the NCSBE site on January 4, 2021) to obtain a single dataframe containing both demographic and vote history information for each registered voter in Union County.
 
 The major steps I took in cleaning and preparing the data for modelling and visualization were as follows:
-1. **Drop duplicate records from both voter history records.** This included identical duplicates and records/ rows that were not completely identical, but shared the same combination of `ncid` (unique voter ID) and `election_desc` (the specific election for which the voter cast a ballot). Each `ncid` should only show up in a given election once, since each voter gets a single vote.<br>
+1. **Drop duplicate records from voter history records.** This included identical duplicates and records/ rows that were not completely identical, but shared the same combination of `ncid` (unique voter ID) and `election_desc` (the specific election for which the voter cast a ballot). Each `ncid` should only show up in a given election once, since each voter gets a single vote.<br>
 
-2. **Drop voter registration records for individuals with "Removed" or "Denied" status.** These individuals are currently (as of January 4) inelligible to vote within Union County. Because the records do not indicate when their status was changed, I could not account for the fact that they may have been elligible to vote in either the 2012 or 2016 election. Thus the dataframes for those elections may be missing individuals who were elligible to vote then, but not in 2020.<br>
+2. **Drop voter registration records for individuals with "Removed" or "Denied" status.** These individuals are currently (as of January 4) ineligible to vote within Union County. Because the records do not indicate when their status was changed, I could not account for the fact that they may have been elligible to vote in either the 2012 or 2016 election. Thus the dataframes for those elections may be missing individuals who were elligible to vote then, but not in 2020.<br>
 
 3. **Merge cleaned voter history data onto cleaned voter registration data on `ncid`.**<br>
 
 4. **Create a separate dataframe for each election (general 2012, 2016, and 2020).** Individuals were excluded from an election dataframe for a given year if they were not registered in time to vote in that election, or if they were too young to vote that year. This left one record per elligible, registered individual in each dataset, even if they did not cast a vote in that particular year.<br><br>
 
 
-After creating a separate dataframe for each election, I explored the data and ultimately prepared each dataset for modeling in a consistent manner to enable direct comparisons. This was done in the <a href="https://github.com/zero731/NC_Elections_Capstone/blob/main/Final_Part_II_Clean_Explore_UC_Elecs.ipynb"> Part II</a>notebook.
+After creating a separate dataframe for each election, I explored the data and ultimately prepared each dataset for modeling in a consistent manner to enable direct comparisons. This was done in the <a href="https://github.com/zero731/NC_Elections_Capstone/blob/main/Final_Part_II_Clean_Explore_UC_Elecs.ipynb"> Part II</a> notebook.
 
 
 Since most of the demographic information is required for voter registration records, there were not many null values to deal with. For variables that were used as model predictors, missing information became its own category.
@@ -86,7 +86,7 @@ For multiclass target models, I again tried Random Forest Classifiers with and w
 ---
 
 ## Results
-The best models for each election year are presented and interpreted in the <a href="https://github.com/zero731/NC_Elections_Capstone/blob/main/Final_Part_III_Model_Interpret_UC_Elecs.ipynb"> Part III</a>notebook.
+The best models for each election year are presented and interpreted in the <a href="https://github.com/zero731/NC_Elections_Capstone/blob/main/Final_Part_III_Model_Interpret_UC_Elecs.ipynb"> Part III</a> notebook.
 
 **Summary of model performance across election years:**
 - Random Forest Classifiers and XGBoost Classifiers performed relatively similary for all years, but XGBoost tended to result in slightly higher overall accuracy across classes.
@@ -96,9 +96,8 @@ The best models for each election year are presented and interpreted in the <a h
 
 Once the best models were selected, the relationships of the top predictive features with the target variable were interpreted using SHAP (SHapley Additive exPlanations). 
 
-<div class="alert alert-block alert-success">
 Across all three election years, age group (generation), birth region, political party, and possession of a drivers license emerged as some of the top predictors of registered voter participation.
-</div>
+
 
 
 
@@ -123,8 +122,6 @@ As Democrats in North Carolina seek to increase turnout for their candidates in 
 - Ensure that voters stay very clearly informed about voter ID laws as they change. People who do not possess drivers licenses often belong to low income and/or minority groups that tend to lean Democratic. Make sure they know their rights and look into providing people with transportation to and from the polls. This may be especially important in areas like Union County which have very few options for public transit.
 
 - Continue making efforts to appeal to voters that do not align with one of the two major parties. These voters continue to make up an increasing proportion of registered voters in Union County.
-
-
 
 
 

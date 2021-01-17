@@ -101,7 +101,7 @@ def basic_hist(df, year, col, title=None,
             'N': 'goldenrod'
         }
         cat_orders.update({'vote_bin': ['Y', 'N']})
-        labels.update({'vote_bin': 'Voted in Election'})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
         
     
     
@@ -357,7 +357,7 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
         }
     if (group_col_1 == 'vote_bin') | (group_col_2 == 'vote_bin'):
         cat_orders.update({'vote_bin': ['Y', 'N']})
-        labels.update({'vote_bin': 'Voted in Election'})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
 
 
     if group_col_2 == 'pri_vote_bin':
@@ -597,7 +597,7 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
 
     if group_col_1 == 'vote_bin':
         cat_orders.update({'vote_bin': ['Y', 'N']})
-        labels.update({'vote_bin': 'Voted in Election'})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
 
 
     if group_col_1 == 'pri_vote_bin':
@@ -845,7 +845,7 @@ def multi_yr_hist(df, group_col_1, group_col_2,
         }
     if (group_col_1 == 'vote_bin') | (group_col_2 == 'vote_bin'):
         cat_orders.update({'vote_bin': ['Y', 'N']})
-        labels.update({'vote_bin': 'Voted in Election'})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
 
     
     if group_col_2 == 'pri_vote_bin':
@@ -1086,7 +1086,7 @@ def basic_pie(df, year, col, title=None,
             'Y': 'blue',
             'N': 'goldenrod'
         }
-        labels.update({'vote_bin': 'Voted in Election'})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
         
     
     
@@ -1271,7 +1271,7 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
             'N': 'goldenrod'
         }
     if (group_col_1 == 'vote_bin') | (group_col_2 == 'vote_bin'):
-        labels.update({'vote_bin': 'Voted in Election'})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
 
 
     if group_col_2 == 'pri_vote_bin':
@@ -1479,7 +1479,7 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
         }
     if (group_col_1 == 'vote_bin') | (group_col_2 == 'vote_bin'):
         cat_orders.update({'vote_bin': ['Y', 'N']})
-        labels.update({'vote_bin': 'Voted in Election'})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
 
 
     if group_col_2 == 'pri_vote_bin':
