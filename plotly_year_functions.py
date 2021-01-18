@@ -7,7 +7,7 @@
 
 
 def basic_hist(df, year, col, title=None,
-                  template='seaborn'):
+                  template='seaborn', save=False, fig_name=None):
     """Takes a DataFrame with a year column, filters the DataFrame to the
         provided election year, and returns a color-coded Plotly histogram 
         for the provided column.
@@ -19,6 +19,9 @@ def basic_hist(df, year, col, title=None,
         title (str, optional): Title for the resulting plot. If none is provided,
             defaults to 'Distribution of labels[{col}] in {year} General Election'.
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
 
     Returns:
         Figure: Returns Plotly histogram of provided column for the specified year.
@@ -26,6 +29,9 @@ def basic_hist(df, year, col, title=None,
 
     import pandas as pd
     import plotly.express as px
+    import matplotlib.pyplot as plt
+
+    fig_filepath = 'Figures/'
 
     title_font_dict = {
         'family':'Arial Black',
@@ -226,6 +232,9 @@ def basic_hist(df, year, col, title=None,
         tickfont=ax_tick_font_dict
     )
     
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
     
     return fig
 
@@ -242,7 +251,7 @@ def basic_hist(df, year, col, title=None,
 
 def grp_hist(df, year, group_col_1, group_col_2, title=None,
              barmode='group', histnorm=None,
-             template='seaborn'):
+             template='seaborn', save=False, fig_name=None):
     """Takes a DataFrame with a year column, groups the df by the first
         column specified, then color-codes by the second provided column
         to create a Plotly histogram for the specified election year.
@@ -258,6 +267,9 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
         histnorm (str, optional): Plotly histnorm parameter, but only takes None or 'percent'.
              Defaults to None.
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
 
     Returns:
         Figure: Plotly histogram grouped by group_col_1 and color-coded
@@ -265,7 +277,10 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
     """    
     import pandas as pd
     import plotly.express as px
-    
+    import matplotlib.pyplot as plt
+
+
+    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -498,6 +513,9 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
     )
 
 
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+
     return fig
 
 
@@ -512,7 +530,7 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
 
 
 def grp_yr_hist(df, group_col_1, title=None, barmode='group',
-                histnorm=None, template='seaborn'):
+                histnorm=None, template='seaborn', save=False, fig_name=None):
     """Takes a DataFrame with a year column, groups the df by the first
         group_col_1, then color-codes by election year to create a Plotly histogram.
 
@@ -525,6 +543,9 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
         histnorm (str, optional): Plotly histnorm parameter, but only takes None or 'percent'.
              Defaults to None.
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
 
     Returns:
         Figure: Plotly histogram grouped by group_col_1 and color-coded
@@ -532,7 +553,10 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
     """    
     import pandas as pd
     import plotly.express as px
+    import matplotlib.pyplot as plt
     
+
+    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -691,6 +715,9 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
     )
 
 
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+
     return fig
 
 
@@ -707,7 +734,8 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
 def multi_yr_hist(df, group_col_1, group_col_2,
                   facet_feat='year', facet_spacing=0.05,
                   title=None, barmode='group', histnorm=None,
-                  template='seaborn', width=1000, height=450):
+                  template='seaborn', width=1000, height=450,
+                  save=False, fig_name=None):
     """Takes a DataFrame with a year column, groups the df by the first
         column specified, then color-codes by the second provided column
         to create a Plotly histogram subplot for each election year.
@@ -728,6 +756,9 @@ def multi_yr_hist(df, group_col_1, group_col_2,
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
         width (int, optional): Width of figure. Defaults to 1000.
         height (int, optional): Height of figure. Defaults to 450.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
 
     Returns:
         Figure: Plotly histograms grouped by group_col_1 and color-coded
@@ -737,7 +768,10 @@ def multi_yr_hist(df, group_col_1, group_col_2,
     
     import pandas as pd
     import plotly.express as px
-    
+    import matplotlib.pyplot as plt
+
+
+    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -998,6 +1032,10 @@ def multi_yr_hist(df, group_col_1, group_col_2,
         ann_dict
     )
 
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+
     return fig
 
 
@@ -1012,11 +1050,35 @@ def multi_yr_hist(df, group_col_1, group_col_2,
 
 
 def basic_pie(df, year, col, title=None,
-                  template='seaborn', showlegend=True):
-    
+                  template='seaborn', showlegend=True, save=False, fig_name=None):
+    """Takes a DataFrame with a year column, filters the DataFrame to the
+        provided election year, and returns a Plotly pie chart for the provided
+        column.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        year (int): Election year (2012, 2016, or 2020 only)
+        col (str): Name of the df column by which to group
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to 'Registered Voters by {col} in {year}'.
+        template (str, optional): [description]. Defaults to 'seaborn'.
+        showlegend (bool, optional): Whether to display the figure legend.
+            Defaults to True.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Plotly pie chart color-coded according to col
+            for the specified election year. 
+    """    
+
     import pandas as pd
     import plotly.express as px
-    
+    import matplotlib.pyplot as plt
+
+
+    fig_filepath = 'Figures/'
     
     title_dict = {
         'font' : {
@@ -1176,6 +1238,10 @@ def basic_pie(df, year, col, title=None,
         legend=leg_dict,
         showlegend=showlegend
     )
+
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
     
     return fig
 
@@ -1190,13 +1256,43 @@ def basic_pie(df, year, col, title=None,
 
 
 def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
-                  template='seaborn', showlegend=True):
-    
+                  template='seaborn', showlegend=True, save=False, fig_name=None):
+    """Takes a DataFrame with a year column, filters to the specified election 
+        year, groups the df by the first column specified, filters to include 
+        only the specified category from that column, then displays the composition 
+        of that group as categories from the second provided column as a Plotly
+        pie chart.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        year (int): Election year (2012, 2016, or 2020 only)
+        group_col_1 (str): Name of the df column by which to group
+        group_col_2 (str): Name of the df column by which to color-code the 
+            pie chart
+        col_1_cat (str): One of the category labels from group_col_1
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to '{group_col_1} ({col_1_cat}) by <br> {group_col_2} in {year}'.
+        template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        showlegend (bool, optional): Whether to display the figure legend. 
+            Defaults to True.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Plotly pie chart grouped by group_col_1, filtered to include only
+            col_1_cat, and broken down into categories from group_col_2.
+    """    
+
     import pandas as pd
     import plotly.express as px
+    import matplotlib.pyplot as plt
+
+
+    fig_filepath = 'Figures/'
+
     
     labels={}
-    
     
     title_dict = {
         'font' : {
@@ -1345,10 +1441,11 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
     
     
     if title==None:
-        title='{} ({}) <br> by {}'.format(
+        title='{} ({}) by <br>  {} in {}'.format(
             labels[group_col_1], 
             col_1_cat,
-            labels[group_col_2]
+            labels[group_col_2],
+            str(year)
                  )
     
     fig = px.pie(filtered_df, values='Count', names=group_col_2,
@@ -1368,6 +1465,10 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
         title=title_dict,
         legend=leg_dict
     )
+
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
     
     return fig
 
@@ -1382,13 +1483,45 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
 
 def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
                   facet_feat='year', title=None,
-                  template='seaborn', width=900, height=450):
-    
+                  template='seaborn', width=900, height=450,
+                  save=False, fig_name=None):
+    """Takes a DataFrame with a year column, groups the df by the first column
+        specified, filters to include only the specified category from that column,
+        then displays the composition of that group as categories from the second
+        provided column as a Plotly pie chart. Produces one pie chart for each
+        election year.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        group_col_1 (str): Name of the df column by which to group
+        group_col_2 (str): Name of the df column by which to color-code the 
+            pie chart
+        col_1_cat (str): One of the category labels from group_col_1
+        facet_feat (str, optional): Name of column for which to create subplots.
+            Defaults to 'year'.
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to '{group_col_1} ({col_1_cat}) by {group_col_2}'.
+        template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        width (int, optional): Width dimension of the figure. Defaults to 900.
+        height (int, optional): Height dimension of the figure. Defaults to 450.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Multiple Plotly pie charts, one for each year, grouped by group_col_1,
+         filtered to include only col_1_cat, and broken down into categories 
+         from group_col_2.
+    """    
+
     import pandas as pd
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
+    import matplotlib.pyplot as plt
+
     
-    
+    fig_filepath = 'Figures/'
+
     title_dict = {
         'font' : {
             'family':'Arial Black',
@@ -1609,6 +1742,10 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
     fig.update_annotations(
         ann_dict
     )
+
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
     
     return fig
 

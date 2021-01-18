@@ -17,7 +17,9 @@ The 2020 general election saw many key <a href="https://www.cnn.com/election/202
 
 Many of the battleground states flipped from red to blue during the 2020 election in the midst of this massive voter turnout. However, my home state of North Carolina was not one of them. The 2020 election saw above average <a href="https://www.statista.com/statistics/1184621/presidential-election-voter-turnout-rate-state/"> voter turnout in NC</a> as compared to the country as a whole, with 71.5% of elligible North Carolinians showing up at the polls. In the last 3 presidential elections, North Carolina has made the list of <a href="https://www.cnn.com/2020/11/09/politics/2020-election-trump-biden-closest-states/index.html"> top 10 states</a> with the closest margin. This was also reflected at the state level in 2020, with one <a href="https://ballotpedia.org/North_Carolina_Supreme_Court_elections,_2020"> NC Supreme Court race</a> being decided by a margin of just 412 votes after a recount. When political races are as close as we saw in the 2020 general election, absolutely every vote counts. Thus, it is important to understand who is voting, and who is failing to turnout to the polls.
 
-This project focuses on examining trends in voter turnout in the 2012, 2016, and 2020 elections in Union County, NC. I intend to scale up to examining statewide trends once finalized voter history records have been released for the 2020 general election for every county. I combined information from NC voter registration records with records of each registered individual's voting history, and built models to predict whether or not an individual participated (Vote vs. No Vote) and what voting method they used (Early, Election Day, or No Vote), with separate models for each year. <br><br>
+This project focuses on examining trends in voter turnout in the 2012, 2016, and 2020 elections in Union County, NC. As part of this project, I created a Streamlit dashboard that allows for interactive exploration of these trends. I will provide the link here when it has been deployed.
+
+I combined information from NC voter registration records with records of each registered individual's voting history, and built models to predict whether or not an individual participated (Vote vs. No Vote) and what voting method they used (Early, Election Day, or No Vote), with separate models for each year. I intend to scale up to examining statewide trends once finalized voter history records have been released for the 2020 general election for every county in North Carolina.<br><br>
 
 
 
@@ -94,12 +96,46 @@ The best models for each election year are presented and interpreted in the <a h
 - Across years, binary target model accuracy of the best models maxed out around 67% overall accuracy and the best multiclass models maxed out at around 50% overall accuracy.
 
 
+<img src="Figures/" width = 600 halign=center>
+
+
 Once the best models were selected, the relationships of the top predictive features with the target variable were interpreted using SHAP (SHapley Additive exPlanations). 
+
+<img src="Figures/" width = 600 halign=center>
+
 
 Across all three election years, age group (generation), birth region, political party, and possession of a drivers license emerged as some of the top predictors of registered voter participation.
 
+### Age
+Across all three general election years, age (in the form of the categorical variable `gen_grp`, which groups voters by generation) was one of the mostly highly predictive features of whether or not a registered voter actually cast a ballot in the election. Millennials consistently emerged as the least likely to vote in each election in Union County. No one belonging to Gen Z was old enough to register to vote in the 2012 election, and this generation made up a very small portion of those eligible to vote in 2016 and 2020. However, it appears that Gen Z is behaving similarly to Millennials in Union County and failing to turn out at the polls as consistently as Generation X and Baby Boomers. 
+
+<img src="Figures/" width = 600 halign=center>
 
 
+
+### Birth Region
+Across all three general election years, the fact that a registered voter's birth region information (U.S. state or territory or out of country) was missing emerged as a useful predictor. The other categories for birth region were not as useful as the 'Missing' category. Compared to the other categories, 'Missing' birth region is the only group with a substantially higher proportion of its members turning out to vote than not.
+
+<img src="Figures/" width = 600 halign=center>
+
+
+
+### Political Party
+Across all three general election years, whether or not someone was registered as a Republican emerged as a top predictive feature of participation in the election. Republicans in Union County appear to be more likely to vote than not, whereas voters that registered as unaffiliated or as members of the Libertarian, Green, or Constitution party are less likely to vote. These 'Other' voters appear to be making up an increasing portion of registered non-voters as time has passed. The participation by Union County Democrats in the past three general elections appears to be less consistent.
+
+<img src="Figures/" width = 600 halign=center>
+
+It will be interesting to see how the trends shown above play out as the registered party affiliations of voters shift. It appears that while the proportion of voters who register as Democrats is relatively stable (maybe decreasing slightly), the proportion of registered Republican voters is beginning to decline and the proportion of voters registering as unaffiliated or as a member of a minor party is on the rise.
+
+<img src="Figures/" width = 600 halign=center>
+
+
+
+### Drivers License
+Voters that do not possess a drivers license make up a relatively small portion of the registered voter population (<10%). This may be due in part to perceived barriers to registering without this form of ID. People may be less likely to register to vote if they feel that not having a photo ID will make it more difificult for them when it comes time to actually cast a ballot. <br><br>
+A valid drivers license/ photo ID was not required to vote in the 2020 election. However, the issue of requiring a photo ID to vote in elections in North Carolina has been a source of confusion and frustration due to a voter ID law passed in 2018 and blocked from taking effect in early 2019. People without drivers licenses tended to be less likely to vote across all 3 election years.
+
+<img src="Figures/" width = 600 halign=center>
 
 
 
@@ -118,7 +154,6 @@ As Democrats in North Carolina seek to increase turnout for their candidates in 
 
 - Investigate why individuals whose voter registration is missing birth region information are so much more likely to vote. Why is the information missing and what makes these voters different? Is this a demographic that is more likely to vote a certain way?
 
-
 - Ensure that voters stay very clearly informed about voter ID laws as they change. People who do not possess drivers licenses often belong to low income and/or minority groups that tend to lean Democratic. Make sure they know their rights and look into providing people with transportation to and from the polls. This may be especially important in areas like Union County which have very few options for public transit.
 
 - Continue making efforts to appeal to voters that do not align with one of the two major parties. These voters continue to make up an increasing proportion of registered voters in Union County.
@@ -130,3 +165,10 @@ As Democrats in North Carolina seek to increase turnout for their candidates in 
 ---
 
 ## Future Work
+
+Currently my plans for future work with this project include:
+ - Scaling up to a statewide analysis once all North Carolina counties have finalized their voter history records and statistics for the 2020 general election.
+ - Further investigating the interaction effects among demographic features for each election year in Union County.
+ - Adding the following sections to my Union County registered voters dashboard:
+    - A section to explore trends in voter registration status (Active, Removed, Denied, Inactive).
+    - A section to compare the current registered voter population to the most recent U.S. Census data for Union County.
