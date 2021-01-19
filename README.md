@@ -1,28 +1,25 @@
-# Registered Voter Participation in Union County, NC
-## Capstone Project
+# Registered Voter Participation in Union County, North Carolina
 ### Author: Max Steele
 ---
 
 ## Abstract
+The 2020 general election saw many key battleground states with extremely close margins for races at virtually every level of the ballot. Several battleground states flipped from red in 2016 to blue in 2020. However, North Carolina was one battleground state that remained red in the 2020 general election, awarding its electoral votes to the Republican candidate, despite re-electing a Democratic governor. Increased turnout of early voters and mail-in ballots in 2020 seemed promising for Democratic candidates, but in many cases they fell short of victory. With political races being decided by a slim margin, it is important to understand who is voting, and who is failing to turnout. Equipped with this information, local Democratic leaders can begin the targeted work of increasing turnout for their candidates in future elections. 
+ 
+To address this problem, I built a dashboard for exploring trends in registered voter participation in Union County, NC in the 2012, 2016, and 2020 general elections. I also built classification models for each year to investigate which demographic features from voter registration data were most predictive of whether an individual voted in Union County. The best models for 2012, 2016, and 2020 achieved an accuracy of 66%, 69%, and 66%, respectively. Across all three election years, age group, birth region, political party, and possession of a driver's license emerged as top predictors of registered voter participation.
+ 
+Overall, it was relatively difficult to predict whether a registered voter would cast a ballot based on information in their voter registration record. Model performance may be improved if voter registration records could be supplemented with information such as education and income level. However, model performance was better than guessing, and training models on voter registration and history data that is freely available highlighted important trends within and between elections.<br>
+ 
 
-<br>
 ---
-<br>
 
-
-
----
 ## Introduction
-The 2020 general election saw many key <a href="https://www.cnn.com/election/2020/results/president"> battleground states</a> battleground states with extremely close margins for not only the presidential race, but for races at virtually every level of the ballot. This resulted in recounts in several states and Senate runoff elections in Georgia. We also witnessed the <a href="https://www.washingtonpost.com/graphics/2020/elections/voter-turnout/">highest voter turnout in over a century</a>, with 2/3 of every American elligible to vote casting a ballot.
+The 2020 general election saw many key <a href="https://www.cnn.com/election/2020/results/president"> battleground states</a> with extremely close margins for not only the presidential race, but for races at virtually every level of the ballot. This resulted in recounts in several states and Senate runoff elections in Georgia. We also witnessed the <a href="https://www.washingtonpost.com/graphics/2020/elections/voter-turnout/">highest voter turnout in over a century</a>, with 2/3 of every American elligible to vote casting a ballot.
 
-Many of the battleground states flipped from red to blue during the 2020 election in the midst of this massive voter turnout. However, my home state of North Carolina was not one of them. The 2020 election saw above average <a href="https://www.statista.com/statistics/1184621/presidential-election-voter-turnout-rate-state/"> voter turnout in NC</a> as compared to the country as a whole, with 71.5% of elligible North Carolinians showing up at the polls. In the last 3 presidential elections, North Carolina has made the list of <a href="https://www.cnn.com/2020/11/09/politics/2020-election-trump-biden-closest-states/index.html"> top 10 states</a> with the closest margin. This was also reflected at the state level in 2020, with one <a href="https://ballotpedia.org/North_Carolina_Supreme_Court_elections,_2020"> NC Supreme Court race</a> being decided by a margin of just 412 votes after a recount. When political races are as close as we saw in the 2020 general election, absolutely every vote counts. Thus, it is important to understand who is voting, and who is failing to turnout to the polls.
+Many of the battleground states flipped from red to blue during the 2020 election in the midst of this massive voter turnout. However, my home state of North Carolina was not one of them, even though enough voters split their ticket to re-elect a Democratic governor. The 2020 election saw above average <a href="https://www.statista.com/statistics/1184621/presidential-election-voter-turnout-rate-state/"> voter turnout in NC</a> as compared to the country as a whole, with 71.5% of eligible North Carolinians showing up at the polls. In the last 3 presidential elections, North Carolina has made the list of <a href="https://www.cnn.com/2020/11/09/politics/2020-election-trump-biden-closest-states/index.html"> top 10 states</a> with the closest margin. This was also reflected at the state level in 2020, with one <a href="https://ballotpedia.org/North_Carolina_Supreme_Court_elections,_2020"> NC Supreme Court race</a> being decided by a margin of just 412 votes after a recount. When political races are as close as we saw in the 2020 general election, absolutely every vote counts. Thus, it is important to understand who is voting, and who is failing to turnout to the polls.
 
-This project focuses on examining trends in voter turnout in the 2012, 2016, and 2020 elections in Union County, NC. As part of this project, I created a Streamlit dashboard that allows for interactive exploration of these trends. I will provide the link here when it has been deployed.
+This project focuses on examining trends in voter turnout in the 2012, 2016, and 2020 elections in Union County, NC. As part of this project, I created a Streamlit dashboard that allows for interactive exploration of these trends and comparison across elections. I will provide the link here when it has been deployed.
 
 I combined information from NC voter registration records with records of each registered individual's voting history, and built models to predict whether or not an individual participated (Vote vs. No Vote) and what voting method they used (Early, Election Day, or No Vote), with separate models for each year. I intend to scale up to examining statewide trends once finalized voter history records have been released for the 2020 general election for every county in North Carolina.<br><br>
-
-
-
 
 
 ---
@@ -74,13 +71,13 @@ All models were built using the following predictive features:
 
 
 For each of the three election years, I modeled voter participation as both a binary target (Vote vs. No vote) and as a multiclass target (Early, Election Day, or No Vote).
-When training both types of models, I tested out both Random Forest Classifiers (scikit-learn), and XGboost Classifiers (xgboost). 
+When training both types of models, I tried both Random Forest Classifiers (scikit-learn), and XGboost Classifiers (xgboost). 
 
 For binary target models I tried Random Forest Classifiers with and without SMOTE to oversample the minority "No Vote" class and XGBoost Classifiers with and without addressing class imbalance with the `scale_pos_weight` hyperparameter.
 
 For multiclass target models, I again tried Random Forest Classifiers with and without SMOTE, and then tested XGBoost classifiers with and without SMOTE.
 
- Each election dataset was split into a training and a testing set. Binary and multiclass target models for the same year were trained using the same train-test split of the data. Models were trained, then tested, with predictive performance evaluated on the test set. The best models were chosen based on balanced accuracy between or among the target classes while attempting to maximize recall of the "No Vote" class.<br><br>
+Each election dataset was split into a training and test set. Binary and multiclass target models for the same year were trained using the same train-test split of the data. Models were trained, then tested, with predictive performance evaluated on the test set. The best models were chosen based on balanced accuracy between or among the target classes while attempting to maximize recall of the "No Vote" class.<br><br>
 
 ---
 
@@ -139,12 +136,7 @@ Across all three general election years, whether or not someone was registered a
 Voters that do not possess a drivers license make up a relatively small portion of the registered voter population (<10%). This may be due in part to perceived barriers to registering without this form of ID. People may be less likely to register to vote if they feel that not having a photo ID will make it more difificult for them when it comes time to actually cast a ballot. <br>
 A valid drivers license/ photo ID was not required to vote in the 2020 election. However, the issue of requiring a photo ID to vote in elections in North Carolina has been a source of confusion and frustration due to a voter ID law passed in 2018 and blocked from taking effect in early 2019. People without drivers licenses tended to be less likely to vote across all 3 election years.
 
-![](/Figures/plotly_explore/drivers_lic_by_vote_bin_multi_yr.png)
-
-
-
-
-<br><br>
+![](/Figures/plotly_explore/drivers_lic_by_vote_bin_multi_yr.png)<br><br>
 
 ---
 
@@ -161,11 +153,7 @@ As Democrats in North Carolina seek to increase turnout for their candidates in 
 
 - Ensure that voters stay very clearly informed about voter ID laws as they change. People who do not possess drivers licenses often belong to low income and/or minority groups that tend to lean Democratic. Make sure they know their rights and look into providing people with transportation to and from the polls. This may be especially important in areas like Union County which have very few options for public transit.
 
-- Continue making efforts to appeal to voters that do not align with one of the two major parties. These voters continue to make up an increasing proportion of registered voters in Union County.
-
-
-
-<br><br>
+- Continue making efforts to appeal to voters that do not align with one of the two major parties. These voters continue to make up an increasing proportion of registered voters in Union County.<br><br>
 
 ---
 
@@ -174,6 +162,7 @@ As Democrats in North Carolina seek to increase turnout for their candidates in 
 Currently my plans for future work with this project include:
  - Scaling up to a statewide analysis once all North Carolina counties have finalized their voter history records and statistics for the 2020 general election.
  - Further investigating the interaction effects among demographic features for each election year in Union County.
+ - Retraining models using SMOTENC rather than SMOTE.
  - Adding the following sections to my Union County registered voters dashboard:
     - A section to explore trends in voter registration status (Active, Removed, Denied, Inactive).
     - A section to compare the current registered voter population to the most recent U.S. Census data for Union County.
