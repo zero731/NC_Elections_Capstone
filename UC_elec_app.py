@@ -131,7 +131,7 @@ intro.markdown(
     """
 )
 
-data_note = intro.beta_expander('**Important Note for Interpreting Graphs:')
+data_note = intro.beta_expander('Important Note for Interpreting Graphs:')
 data_note.markdown(
     """
     When interpreting the raw counts and percentages in the graphs you
@@ -413,7 +413,7 @@ non_vote_method_opts = [
 myrhist_group_col_1 = myr_col_1.selectbox(
     label='Group by: ',
     options = myrhist_col_opt,
-    index=0,
+    index=2,
     format_func=format_col_names,
     key='m_grp_col_1'
 )
@@ -423,7 +423,7 @@ if myrhist_group_col_1 in vote_method_opts:
     myrhist_group_col_2 = myr_col_1.selectbox(
         label='Then by: ',
         options = non_vote_method_opts,
-        index=3,
+        index=1,
         format_func=format_col_names,
         key='m_grp_col_2'
     )
@@ -473,7 +473,7 @@ for opt in myrhist_col_opt:
 mygpie_col_1_cat = mygp_col_1.selectbox(
     label='Choose category: ',
     options = mygpie_col_cat_opt,
-    index=0,
+    index=1,
     format_func=format_cat_names,
     key='mygpie_cat'
 )

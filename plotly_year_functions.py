@@ -164,10 +164,17 @@ def basic_hist(df, year, col, title=None,
     
     if col == 'drivers_lic':
         color_map = {
-            'Y': 'green',
-            'N': 'crimson'
+            'License': 'green',
+            'No License': 'crimson'
         }
-        cat_orders.update({'drivers_lic': ['Y', 'N']})
+        cat_orders.update(
+            {
+                'drivers_lic': [
+                    'License',
+                    'No License'
+                ]
+            }
+            )
         labels.update({'drivers_lic': 'Drivers License'})
         
     
@@ -432,11 +439,11 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
 
     if group_col_2 == 'drivers_lic':
         color_map = {
-            'Y': 'green',
-            'N': 'crimson'
+            'License': 'green',
+            'No License': 'crimson'
         }
     if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
-        cat_orders.update({'drivers_lic': ['Y', 'N']})
+        cat_orders.update({'drivers_lic': ['License', 'No License']})
         labels.update({'drivers_lic': 'Drivers License'})
 
 
@@ -653,7 +660,14 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
 
 
     if group_col_1 == 'drivers_lic':
-        cat_orders.update({'drivers_lic': ['Y', 'N']})
+        cat_orders.update(
+            {
+                'drivers_lic': [
+                    'License',
+                    'No License'
+                ]
+            }
+        )
         labels.update({'drivers_lic': 'Drivers License'})
 
 
@@ -939,11 +953,11 @@ def multi_yr_hist(df, group_col_1, group_col_2,
     
     if group_col_2 == 'drivers_lic':
         color_map = {
-            'Y': 'green',
-            'N': 'crimson'
+            'License': 'green',
+            'No License': 'crimson'
         }
     if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
-        cat_orders.update({'drivers_lic': ['Y', 'N']})
+        cat_orders.update({'drivers_lic': ['License', 'No License']})
         labels.update({'drivers_lic': 'Drivers License'})
         
     
@@ -1193,8 +1207,8 @@ def basic_pie(df, year, col, title=None,
     
     if col == 'drivers_lic':
         color_map = {
-            'Y': 'green',
-            'N': 'crimson'
+            'License': 'green',
+            'No License': 'crimson'
         }
         labels.update({'drivers_lic': 'Drivers License'})
         
@@ -1291,8 +1305,6 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
 
     fig_filepath = 'Figures/'
 
-    
-    labels={}
     
     title_dict = {
         'font' : {
@@ -1415,8 +1427,8 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
 
     if group_col_2 == 'drivers_lic':
         color_map = {
-            'Y': 'green',
-            'N': 'crimson'
+            'License': 'green',
+            'No License': 'crimson'
         }
     if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
         labels.update({'drivers_lic': 'Drivers License'})
@@ -1672,11 +1684,11 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
 
     if group_col_2 == 'drivers_lic':
         color_map = {
-            'Y': 'green',
-            'N': 'crimson'
+            'License': 'green',
+            'No License': 'crimson'
         }
     if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
-        cat_orders.update({'drivers_lic': ['Y', 'N']})
+        cat_orders.update({'drivers_lic': ['License', 'No License']})
         labels.update({'drivers_lic': 'Drivers License'})
 
 

@@ -28,9 +28,8 @@ I combined information from NC voter registration records with records of each r
 ---
 
 ## Data
-The data used for this project were obtained from the North Carolina State Board of Elections (NCSBE). Both <a href="https://www.ncsbe.gov/results-data/voter-registration-data"> voter registration records</a> and <a href="https://www.ncsbe.gov/results-data/voter-history-data"> voter history records</a> are made available and updated weekly. Voter history records do not contain demographic information, but the two files can be merged according to a unique ID (`ncid`) assigned to each registered voter in the state of North Carolina.
+The data used for this project were obtained from the North Carolina State Board of Elections (NCSBE). Both <a href="https://www.ncsbe.gov/results-data/voter-registration-data"> voter registration records</a> and <a href="https://www.ncsbe.gov/results-data/voter-history-data"> voter history records</a> are made available and updated weekly. Voter history records do not contain demographic information, but the two files can be merged according to a unique ID (`ncid`) assigned to each registered voter in the state of North Carolina.<br><br>
 
-<br><br>
 
 ---
 
@@ -55,7 +54,7 @@ Since most of the demographic information is required for voter registration rec
 Several features included rare labels (categories that made up less than 5% of the total population). Rare labels were combined into a single 'Other' category. This was distinct from the 'Missing' category.
 
 
-<br><br>
+<br>
 
 ### Modeling
 All models were built using the following predictive features:
@@ -81,9 +80,7 @@ For binary target models I tried Random Forest Classifiers with and without SMOT
 
 For multiclass target models, I again tried Random Forest Classifiers with and without SMOTE, and then tested XGBoost classifiers with and without SMOTE.
 
- Each election dataset was split into a training and a testing set. Binary and multiclass target models for the same year were trained using the same train-test split of the data. Models were trained, then tested, with predictive performance evaluated on the test set. The best models were chosen based on balanced accuracy between or among the target classes while attempting to maximize recall of the "No Vote" class.
-
-<br><br>
+ Each election dataset was split into a training and a testing set. Binary and multiclass target models for the same year were trained using the same train-test split of the data. Models were trained, then tested, with predictive performance evaluated on the test set. The best models were chosen based on balanced accuracy between or among the target classes while attempting to maximize recall of the "No Vote" class.<br><br>
 
 ---
 
@@ -95,47 +92,55 @@ The best models for each election year are presented and interpreted in the <a h
 - Addressing class imbalances either via SMOTE or by making use of XGBoost's `scale_pos_weight` hyperparameter was necessary to improve the performance of all models.
 - Across years, binary target model accuracy of the best models maxed out around 67% overall accuracy and the best multiclass models maxed out at around 50% overall accuracy.
 
+Below are the confusion matrix and ROC-AUC curve for the best binary target model for the 2020 general election. The classifier had and overall accuracy of 66% when making predictions on the test set. Performance was nearly identical for the best 2012 and 2016 models.
 
-<img src="Figures/" width = 600 halign=center>
-
-
-Once the best models were selected, the relationships of the top predictive features with the target variable were interpreted using SHAP (SHapley Additive exPlanations). 
-
-<img src="Figures/" width = 600 halign=center>
+![](/Figures/model_evals/best_2020_bin_eval.png)
 
 
-Across all three election years, age group (generation), birth region, political party, and possession of a drivers license emerged as some of the top predictors of registered voter participation.
+
+Once the best models were selected, the relationships of the top predictive features with the target variable were interpreted using SHAP (SHapley Additive exPlanations). Below is a summary plot of the SHAP values for the best binary model for the 2020 general election. The most important features for predicting voter participation (Vote vs. No Vote) are ranked in descending order, with the top predictive features having the largest absolute SHAP values (longer bars).
+
+![](/Figures/shap/2020_bin_shap_summ_bar.png)
+
+
+Across all three election years, age group (generation, `gen_grp`), birth region (`birth_reg_other`), political party (`party_grp`), and possession of a drivers license (`drivers_lic`) emerged as some of the top predictors of registered voter participation. The direction of effect was interpreted using SHAP summary and force plots like those shown below for the same 2020 target model.
+
+![](/Figures/shap/2020_bin_shap_summ.png)
+
+This force plot breaks down which factors the model used to correctly predict that the voter represented by the third row of the training set did cast a vote in the 2020 election.
+
+![](/Figures/shap/shap_force_2020_idx3.png)
+
+In the case above, the model was pushed towards the prediction of "Vote" (1) by the fact that the voter's birth region information was missing, they belong to the Baby Boomer generation (and thus are not a millenial), and they have a drivers license. The fact the this person is not a Republican pushed the model in the incorrect direction towards "No Vote" (0), but not enough to overwhelm the factors more predictive of "Vote" (1). This example is characteristic of how the top predictive features influenced model predictions for all three election years.
+
+
 
 ### Age
-Across all three general election years, age (in the form of the categorical variable `gen_grp`, which groups voters by generation) was one of the mostly highly predictive features of whether or not a registered voter actually cast a ballot in the election. Millennials consistently emerged as the least likely to vote in each election in Union County. No one belonging to Gen Z was old enough to register to vote in the 2012 election, and this generation made up a very small portion of those eligible to vote in 2016 and 2020. However, it appears that Gen Z is behaving similarly to Millennials in Union County and failing to turn out at the polls as consistently as Generation X and Baby Boomers. 
+Across all three general election years, age group (in the form of the categorical variable `gen_grp`) was one of the mostly highly predictive features of whether or not a registered voter actually cast a ballot in the election. Millennials consistently emerged as the least likely to vote in each election in Union County. No one belonging to Gen Z was old enough to register to vote in the 2012 election, and this generation made up a very small portion of those eligible to vote in 2016 and 2020. However, it appears that Gen Z is behaving similarly to Millennials in Union County and failing to turn out at the polls as consistently as Generation X and Baby Boomers do. 
 
-<img src="Figures/" width = 600 halign=center>
-
+![](/Figures/plotly_explore/vote_bin_by_gen_multi_yr.png)
 
 
 ### Birth Region
 Across all three general election years, the fact that a registered voter's birth region information (U.S. state or territory or out of country) was missing emerged as a useful predictor. The other categories for birth region were not as useful as the 'Missing' category. Compared to the other categories, 'Missing' birth region is the only group with a substantially higher proportion of its members turning out to vote than not.
 
-<img src="Figures/" width = 600 halign=center>
+![](/Figures/plotly_explore/birth_reg_by_vote_bin_multi_yr.png)
 
 
 
 ### Political Party
 Across all three general election years, whether or not someone was registered as a Republican emerged as a top predictive feature of participation in the election. Republicans in Union County appear to be more likely to vote than not, whereas voters that registered as unaffiliated or as members of the Libertarian, Green, or Constitution party are less likely to vote. These 'Other' voters appear to be making up an increasing portion of registered non-voters as time has passed. The participation by Union County Democrats in the past three general elections appears to be less consistent.
 
-<img src="Figures/" width = 600 halign=center>
-
-It will be interesting to see how the trends shown above play out as the registered party affiliations of voters shift. It appears that while the proportion of voters who register as Democrats is relatively stable (maybe decreasing slightly), the proportion of registered Republican voters is beginning to decline and the proportion of voters registering as unaffiliated or as a member of a minor party is on the rise.
-
-<img src="Figures/" width = 600 halign=center>
+![](/Figures/plotly_explore/party_by_vote_bin_multi_yr.png)
 
 
 
 ### Drivers License
-Voters that do not possess a drivers license make up a relatively small portion of the registered voter population (<10%). This may be due in part to perceived barriers to registering without this form of ID. People may be less likely to register to vote if they feel that not having a photo ID will make it more difificult for them when it comes time to actually cast a ballot. <br><br>
+Voters that do not possess a drivers license make up a relatively small portion of the registered voter population (<10%). This may be due in part to perceived barriers to registering without this form of ID. People may be less likely to register to vote if they feel that not having a photo ID will make it more difificult for them when it comes time to actually cast a ballot. <br>
 A valid drivers license/ photo ID was not required to vote in the 2020 election. However, the issue of requiring a photo ID to vote in elections in North Carolina has been a source of confusion and frustration due to a voter ID law passed in 2018 and blocked from taking effect in early 2019. People without drivers licenses tended to be less likely to vote across all 3 election years.
 
-<img src="Figures/" width = 600 halign=center>
+![](/Figures/plotly_explore/drivers_lic_by_vote_bin_multi_yr.png)
+
 
 
 
