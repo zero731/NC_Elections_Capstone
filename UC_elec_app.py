@@ -1,13 +1,9 @@
 ## Import necessary libraries
 import streamlit as st
 import pandas as pd
-# import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
-## Import functions created for visualizations
-# from plotly_year_functions import *
 
 
 ## Import DataFrames
@@ -1841,7 +1837,7 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
 
 ## Settings for app page
 st.set_page_config(
-    page_title='Union County Elections',
+    page_title='Union County Registered Voters',
     layout='centered',
     initial_sidebar_state='auto'
 )

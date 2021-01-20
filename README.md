@@ -1,5 +1,6 @@
 # Registered Voter Participation in Union County, North Carolina
 ### Author: Max Steele
+##### Project Dashboard: <a href="https://share.streamlit.io/zero731/nc_elections_capstone/main/UC_elec_app.py"> Union County Registered Voter Data</a>
 ---
 
 ## Abstract
@@ -17,7 +18,7 @@ The 2020 general election saw many key <a href="https://www.cnn.com/election/202
 
 Many of the battleground states flipped from red to blue during the 2020 election in the midst of this massive voter turnout. However, my home state of North Carolina was not one of them, even though enough voters split their ticket to re-elect a Democratic governor. The 2020 election saw above average <a href="https://www.statista.com/statistics/1184621/presidential-election-voter-turnout-rate-state/"> voter turnout in NC</a> as compared to the country as a whole, with 71.5% of eligible North Carolinians showing up at the polls. In the last 3 presidential elections, North Carolina has made the list of <a href="https://www.cnn.com/2020/11/09/politics/2020-election-trump-biden-closest-states/index.html"> top 10 states</a> with the closest margin. This was also reflected at the state level in 2020, with one <a href="https://ballotpedia.org/North_Carolina_Supreme_Court_elections,_2020"> NC Supreme Court race</a> being decided by a margin of just 412 votes after a recount. When political races are as close as we saw in the 2020 general election, absolutely every vote counts. Thus, it is important to understand who is voting, and who is failing to turnout to the polls.
 
-This project focuses on examining trends in voter turnout in the 2012, 2016, and 2020 elections in Union County, NC. As part of this project, I created a Streamlit dashboard that allows for interactive exploration of these trends and comparison across elections. I will provide the link here when it has been deployed.
+This project focuses on examining trends in voter turnout in the 2012, 2016, and 2020 elections in Union County, NC. As part of this project, I created a Streamlit dashboard that allows for interactive exploration of these trends and comparison across elections. The dashboard can be found <a href="https://share.streamlit.io/zero731/nc_elections_capstone/main/UC_elec_app.py"> here</a>.
 
 I combined information from NC voter registration records with records of each registered individual's voting history, and built models to predict whether or not an individual participated (Vote vs. No Vote) and what voting method they used (Early, Election Day, or No Vote), with separate models for each year. I intend to scale up to examining statewide trends once finalized voter history records have been released for the 2020 general election for every county in North Carolina.<br><br>
 
