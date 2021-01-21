@@ -71,8 +71,8 @@ All models were built using the following predictive features:
  - **City** (`city_grp`) - Cities within Union County: Monroe, Matthews, Waxhaw, Indian Trail, Other (includes all other cities/ towns within the county) <br>
 
 
-For each of the three election years, I modeled voter participation as both a binary target (Vote vs. No vote) and as a multiclass target (Early, Election Day, or No Vote).
-When training both types of models, I tried both Random Forest Classifiers (scikit-learn), and XGboost Classifiers (xgboost). 
+For each of the three election years, I modeled voter participation as both a binary target (Vote vs. No vote) and as a multiclass target (Early, Election Day, or No Vote). I trained additional binary target models on a dataset that combined all three election years.
+When training both binary and multiclass models, I tried both Random Forest Classifiers (scikit-learn), and XGboost Classifiers (xgboost). 
 
 For binary target models I tried Random Forest Classifiers with and without SMOTE to oversample the minority "No Vote" class and XGBoost Classifiers with and without addressing class imbalance with the `scale_pos_weight` hyperparameter.
 
@@ -83,12 +83,12 @@ Each election dataset was split into a training and test set. Binary and multicl
 ---
 
 ## Results
-The best models for each election year are presented and interpreted in the <a href="https://github.com/zero731/NC_Elections_Capstone/blob/main/Final_Part_III_Model_Interpret_UC_Elecs.ipynb"> Part III</a> notebook.
+The best models for each election year, as well as the multi-year model, are presented and interpreted in the <a href="https://github.com/zero731/NC_Elections_Capstone/blob/main/Final_Part_III_Model_Interpret_UC_Elecs.ipynb"> Part III</a> notebook.
 
 **Summary of model performance across election years:**
 - Random Forest Classifiers and XGBoost Classifiers performed relatively similary for all years, but XGBoost tended to result in slightly higher overall accuracy across classes.
 - Addressing class imbalances either via SMOTE or by making use of XGBoost's `scale_pos_weight` hyperparameter was necessary to improve the performance of all models.
-- Across years, binary target model accuracy of the best models maxed out around 67% overall accuracy and the best multiclass models maxed out at around 50% overall accuracy.
+- Across years, binary target model accuracy maxed out around 69% overall accuracy and the best multiclass models maxed out at around 50% overall accuracy.
 
 Below are the confusion matrix and ROC-AUC curve for the best binary target model for the 2020 general election. The classifier had and overall accuracy of 66% when making predictions on the test set. Performance was nearly identical for the best 2012 and 2016 models.
 
@@ -101,7 +101,7 @@ Once the best models were selected, the relationships of the top predictive feat
 ![](/Figures/shap/2020_bin_shap_summ_bar.png)
 
 
-Across all three election years, age group (generation, `gen_grp`), birth region (`birth_reg_other`), political party (`party_grp`), and possession of a drivers license (`drivers_lic`) emerged as some of the top predictors of registered voter participation. The direction of effect was interpreted using SHAP summary and force plots like those shown below for the same 2020 target model.
+Across all three election years, age group (generation, `gen_grp`), birth region (`birth_reg_other`), political party (`party_grp`), and possession of a drivers license (`drivers_lic`) emerged as some of the top predictors of registered voter participation. Interestingly, possession of a drivers license was not one of the top predictors when all three election years were combined to train a single model. The direction of each predictor's effect was interpreted using SHAP summary and force plots like those shown below for the same 2020 target model.
 
 ![](/Figures/shap/2020_bin_shap_summ.png)
 
@@ -142,7 +142,7 @@ A valid drivers license/ photo ID was not required to vote in the 2020 election.
 ---
 
 ## Conclusions/ Recommendations
-Overall, it was relatively difficult to predict whether or not a registered voter in Union County would cast a ballot based on information in their voter registration record. This was true for 2012, 2016, and 2020. Model performance may be improved if voter registration and history records could be supplemented with information such as education and income level. However, this type of information is not readily available in a way that can be connected to individual voters. Even so, training models on the voter registration and voter history data that is freely available did highlight important trends within and between years and raise some interesting questions. 
+Overall, it was relatively difficult to predict whether or not a registered voter in Union County would cast a ballot based on information in their voter registration record. This was true for 2012, 2016, 2020, and when all three elections were combined into a single model. Model performance may be improved if voter registration and history records could be supplemented with information such as education and income level. However, this type of information is not readily available in a way that can be connected to individual voters. Even so, training models on the voter registration and voter history data that is freely available did highlight important trends within and between years and raise some interesting questions. 
 
 Union County, North Carolina has trended increasingly red over the past several years. Like many other battleground states, it is mainly the more populous metro areas such as Mecklenburg and Wake County in NC that allow for the potential to flip from red to blue. With elections as close as they were in 2020, it's extremely important to get people to the polls and to understand why they don't turnout. Increased turnout of early voters and a dramatic increase in mail-in ballots for the 2020 election seemed promising for Democratic candidates, but in many cases Democratic candidates fell short of victory, even if only by a few hundred votes the closest races. 
 
@@ -150,7 +150,7 @@ As Democrats in North Carolina seek to increase turnout for their candidates in 
 
  - Focus on getting Gen Z and millennials to the polls. Many of them are registered, which isn't surprising given that it's something you can do online, but around a third of those who are registered are not bothering to show up and vote. 
 
-- Investigate why individuals whose voter registration is missing birth region information are so much more likely to vote. Why is the information missing and what makes these voters different? Is this a demographic that is more likely to vote a certain way?
+- Investigate why individuals whose voter registration is missing birth region information are so much more likely to vote. Why is the information missing and what makes these voters different? Is this a demographic that is more likely to vote a certain way? Originally I thought that maybe people who were born out of the country would be more likely to not disclose this information, especially given the recent political climate. On the other hand, it seems like naturalized citizens would likely be required to provide more thorough documentation. Perhaps there is some relationship between a tendency to skip over providing non-required information or how and when someone registers and whether or not someone votes.
 
 - Ensure that voters stay very clearly informed about voter ID laws as they change. People who do not possess drivers licenses often belong to low income and/or minority groups that tend to lean Democratic. Make sure they know their rights and look into providing people with transportation to and from the polls. This may be especially important in areas like Union County which have very few options for public transit.
 
