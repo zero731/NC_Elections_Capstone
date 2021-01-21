@@ -2436,6 +2436,60 @@ st.set_page_config(
     page_icon=':us:'
 )
 
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+###### Define Sidebar for Navigation
+##########################################################################
+##########################################################################
+side_title = st.sidebar.header(
+    'Choose Sections to Display:'
+)
+side_sec_1 = st.sidebar.subheader(
+    'Explore by Year'
+)
+
+side_syr_select_1 = st.sidebar.checkbox(
+    label='One Variable',
+    value=True,
+    key='syr_select_1'
+)
+
+side_syr_select_2 = st.sidebar.checkbox(
+    label='Two Variables',
+    value=False,
+    key='syr_select_2'
+)
+
+side_sec_2 = st.sidebar.subheader(
+    'Compare Years'
+)
+
+side_myr_select_1 = st.sidebar.checkbox(
+    label='One Variable',
+    value=True,
+    key='myr_select_1'
+)
+
+side_myr_select_2 = st.sidebar.checkbox(
+    label='Two Variables',
+    value=False,
+    key='myr_select_2'
+)
+
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+###### Introduction Section
+##########################################################################
+##########################################################################
+
 ## Set page title
 st.title('Registered Voter Participation in Union County, North Carolina')
 
@@ -2454,7 +2508,8 @@ intro.markdown(
     """
     This dashboard allows you to interactively explore and visualize 
     trends in registered voter turnout in Union County, NC for the
-    2012, 2016, and 2020 general elections.  
+    2012, 2016, and 2020 general elections. Use the sidebar selection 
+    menu to display/hide sections.
     """
 )
 
@@ -2466,6 +2521,7 @@ intro.markdown(
     history data.
     """
 )
+
 
 data_note = intro.beta_expander(
     'Important Note for Interpreting Graphs:',
@@ -2490,6 +2546,21 @@ data_note.markdown(
     """
 )
 
+plotly_note = intro.beta_expander(
+    'Interactive Graph Functionality:'
+)
+plotly_note.markdown(
+    """
+    The graphs you can create are interactive and were created using 
+    [Plotly](https://plotly.com/). As you hover over the a graph,
+    certain information will be displayed and a Modebar will appear. 
+    Find a tutorial on how to use the Modebar 
+    [here](https://plotly.com/chart-studio-help/getting-to-know-the-plotly-modebar/).
+    You can switch to a fullscreen view by clicking on the divergent 
+    arrows associated with the Modebar.
+    """
+)
+
 
 
 ##########################################################################
@@ -2500,354 +2571,390 @@ data_note.markdown(
 ##########################################################################
 ##########################################################################
 
-## Basic histogram for a single year
-# Define container for section
-single_yr_bas = st.beta_container()
-single_yr_bas.header('Explore trends for a single election year:')
-single_yr_bas.subheader('Explore one variable at a time:')
-syb_col_1, syb_col_2 = single_yr_bas.beta_columns(2)
+if side_syr_select_1:
+    ## Basic histogram for a single year
+    # Define container for section
+    single_yr_bas = st.beta_container()
+    single_yr_bas.header('Explore trends for a single election year:')
+    single_yr_bas.subheader('Explore one variable at a time:')
+    syb_col_1, syb_col_2 = single_yr_bas.beta_columns(2)
 
-# Choose year to explore
-bhist_year = syb_col_2.radio(
-    label='Year: ',
-    options = [2012, 2016, 2020],
-    index=2,
-    key='b_year'
-)
-
-# Choose column to group by/ investigate
-bhist_col_opt = [
-    'vote_method_4', 'vote_method_5', 'vote_bin', 
-    'pri_vote_bin', 'birth_age_adj', 'gen_grp',
-    'party_grp', 'gender_code', 'race_grp',
-     'birth_reg_other', 'drivers_lic', 'city_grp'
-]
-bhist_group_col = syb_col_1.selectbox(
-    label='See the distribution of: ',
-    options = bhist_col_opt,
-    index=0,
-    format_func=format_col_names,
-    key='b_col'
-)
-
-# Plot basic histogram
-syb_hist = basic_hist(
-    gen_elecs_df, bhist_year, bhist_group_col
-)
-single_yr_bas.plotly_chart(syb_hist, use_container_width=True)
-
-##########################################################################
-## Basic pie chart for a single year
-
-# Plot basic pie chart
-syb_pie = basic_pie(
-    gen_elecs_df,
-     bhist_year,
-      bhist_group_col,
-      title=''
-)
-single_yr_bas.plotly_chart(syb_pie, use_container_width=True)
-
-single_yr_bas.markdown('***')
-
-
-##########################################################################
-##########################################################################
-##########################################################################
-## Grouped histogram for a single year
-# Define container for section
-single_yr_grp = st.beta_container()
-single_yr_grp.header('Explore trends for a single election year:')
-single_yr_grp.subheader('Break down trends across 2 variables at a time:')
-syg_col_1, syg_col_2 = single_yr_grp.beta_columns(2)
-
-## Basic histogram for a single year
-# Choose year to explore
-ghist_year = syg_col_2.radio(
-    label='Year: ',
-    options = [2012, 2016, 2020],
-    index=2,
-    key='g_year'
-)
-
-# Choose 1st column to group by/ investigate
-ghist_col_opt = [
-    'vote_method_4', 'vote_method_5', 'vote_bin', 
-    'pri_vote_bin', 'gen_grp',
-    'party_grp', 'gender_code', 'race_grp',
-    'birth_reg_other', 'drivers_lic', 'city_grp'
-]
-
-vote_method_opts = [
-    'vote_method_4', 'vote_method_5', 'vote_bin'
-]
-
-non_vote_method_opts = [
-    'pri_vote_bin', 'gen_grp',
-    'party_grp', 'gender_code', 'race_grp',
-    'birth_reg_other', 'drivers_lic', 'city_grp'
-]
-
-ghist_group_col_1 = syg_col_1.selectbox(
-    label='Group by: ',
-    options = ghist_col_opt,
-    index=0,
-    format_func=format_col_names,
-    key='g_grp_col_1'
-)
-
-# Choose 2nd column to group by/ investigate
-if ghist_group_col_1 in vote_method_opts:
-    ghist_group_col_2 = syg_col_1.selectbox(
-        label='Then by: ',
-        options = non_vote_method_opts,
+    # Choose year to explore
+    bhist_year = syb_col_2.radio(
+        label='Year: ',
+        options = [2012, 2016, 2020],
         index=2,
-        format_func=format_col_names,
-        key='g_grp_col_2'
+        key='b_year'
     )
 
-else: 
-    ghist_group_col_2 = syg_col_1.selectbox(
+    # Choose column to group by/ investigate
+    bhist_col_opt = [
+        'vote_method_4', 'vote_method_5', 'vote_bin', 
+        'pri_vote_bin', 'birth_age_adj', 'gen_grp',
+        'party_grp', 'gender_code', 'race_grp',
+        'birth_reg_other', 'drivers_lic', 'city_grp'
+    ]
+    bhist_group_col = syb_col_1.selectbox(
+        label='See the distribution of: ',
+        options = bhist_col_opt,
+        index=0,
+        format_func=format_col_names,
+        key='b_col'
+    )
+
+    # Plot basic histogram
+    syb_hist = basic_hist(
+        gen_elecs_df, bhist_year, bhist_group_col
+    )
+    single_yr_bas.plotly_chart(syb_hist, use_container_width=True)
+
+
+    ##########################################################################
+    ##########################################################################
+    ## Basic pie chart for a single year
+
+    # Plot basic pie chart
+    syb_pie = basic_pie(
+        gen_elecs_df,
+        bhist_year,
+        bhist_group_col,
+        title=''
+    )
+    single_yr_bas.plotly_chart(syb_pie, use_container_width=True)
+
+    single_yr_bas.markdown('***')
+
+
+if side_syr_select_2:
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
+    ## Grouped histogram for a single year
+    # Define container for section
+    single_yr_grp = st.beta_container()
+    single_yr_grp.header('Explore trends for a single election year:')
+    single_yr_grp.subheader('Break down trends across 2 variables at a time:')
+    syg_col_1, syg_col_2, syg_col_3 = single_yr_grp.beta_columns(3)
+
+    ## Basic histogram for a single year
+    # Choose year to explore
+    ghist_year = syg_col_2.radio(
+        label='Year: ',
+        options = [2012, 2016, 2020],
+        index=2,
+        key='g_year'
+    )
+
+    # Choose 1st column to group by/ investigate
+    ghist_col_opt = [
+        'vote_method_4', 'vote_method_5', 'vote_bin', 
+        'pri_vote_bin', 'gen_grp',
+        'party_grp', 'gender_code', 'race_grp',
+        'birth_reg_other', 'drivers_lic', 'city_grp'
+    ]
+
+    vote_method_opts = [
+        'vote_method_4', 'vote_method_5', 'vote_bin'
+    ]
+
+    non_vote_method_opts = [
+        'pri_vote_bin', 'gen_grp',
+        'party_grp', 'gender_code', 'race_grp',
+        'birth_reg_other', 'drivers_lic', 'city_grp'
+    ]
+
+    ghist_group_col_1 = syg_col_1.selectbox(
+        label='Group by: ',
+        options = ghist_col_opt,
+        index=0,
+        format_func=format_col_names,
+        key='g_grp_col_1'
+    )
+
+    # Choose 2nd column to group by/ investigate
+    if ghist_group_col_1 in vote_method_opts:
+        ghist_group_col_2 = syg_col_1.selectbox(
             label='Then by: ',
-            options = ghist_col_opt,
-            index=0,
+            options = non_vote_method_opts,
+            index=2,
             format_func=format_col_names,
             key='g_grp_col_2'
         )
 
-
-# Choose raw count or percent
-ghist_norm = syg_col_2.radio(
-    label='Display as: ',
-    options = [None, 'percent'],
-    index=0,
-    format_func=norm_label,
-    key='g_norm'
-)
-
-
-# # Choose bar type
-# ghist_bar = syg_col_2.radio(
-#     label='Bar type: ',
-#     options = ['Grouped', 'Stacked'],
-#     index=0,
-#     key='g_bar'
-# )
+    else: 
+        ghist_group_col_2 = syg_col_1.selectbox(
+                label='Then by: ',
+                options = ghist_col_opt,
+                index=0,
+                format_func=format_col_names,
+                key='g_grp_col_2'
+            )
 
 
-# # Plot grouped histogram for a single year
-# if ghist_bar=='Grouped':
-#     syg_hist = grp_hist(
-#         gen_elecs_df, ghist_year,
-#         ghist_group_col_1,
-#         ghist_group_col_2,
-#         histnorm=ghist_norm
-#     )
-# if ghist_bar=='Stacked':
-#     syg_hist = stack_grp_hist(
-#         gen_elecs_df, ghist_year,
-#         ghist_group_col_1,
-#         ghist_group_col_2,
-#         percent=ghist_norm
-#     )
+    # Choose raw count or percent
+    ghist_norm = syg_col_3.radio(
+        label='Display as: ',
+        options = [None, 'percent'],
+        index=0,
+        format_func=norm_label,
+        key='g_norm'
+    )
 
-syg_hist = grp_hist(
-        gen_elecs_df, ghist_year,
-        ghist_group_col_1,
+
+    # Choose bar type
+    ghist_bar = syg_col_3.radio(
+        label='Bar type: ',
+        options = ['Grouped', 'Stacked'],
+        index=0,
+        key='g_bar'
+    )
+
+
+    # Plot grouped histogram for a single year
+    if ghist_bar=='Grouped':
+        syg_hist = grp_hist(
+            gen_elecs_df, ghist_year,
+            ghist_group_col_1,
+            ghist_group_col_2,
+            histnorm=ghist_norm
+        )
+    if ghist_bar=='Stacked':
+        syg_hist = stack_grp_hist(
+            gen_elecs_df, ghist_year,
+            ghist_group_col_1,
+            ghist_group_col_2,
+            percent=ghist_norm
+        )
+
+    single_yr_grp.plotly_chart(syg_hist, use_container_width=True)
+
+
+    ##########################################################################
+    ##########################################################################
+    ## Grouped pie charts for a single year
+    # Define container for section
+    single_yr_grp_pie = st.beta_container()
+    sygp_col_1, sygp_col_2 = single_yr_grp_pie.beta_columns(2)
+
+
+    # Choose category from column 2 to investigate
+    for opt in ghist_col_opt:
+        if ghist_group_col_2==opt:
+            sgpie_col_cat_opt = gen_elecs_df.loc[gen_elecs_df['year']==ghist_year][ghist_group_col_2].unique()
+
+    sgpie_col_1_cat = sygp_col_1.selectbox(
+        label='Choose category: ',
+        options = sgpie_col_cat_opt,
+        index=0,
+        format_func=format_cat_names,
+        key='gpie_cat'
+    )
+
+    # Plot basic pie chart
+    sygp_pie = grp_pie(
+        gen_elecs_df,
+        ghist_year,
         ghist_group_col_2,
-        histnorm=ghist_norm
+        ghist_group_col_1,
+        sgpie_col_1_cat
     )
+    single_yr_grp_pie.plotly_chart(sygp_pie, use_container_width=True)
 
-single_yr_grp.plotly_chart(syg_hist, use_container_width=True)
-
-
-##########################################################################
-## Grouped pie charts for a single year
-# Define container for section
-single_yr_grp_pie = st.beta_container()
-sygp_col_1, sygp_col_2 = single_yr_grp_pie.beta_columns(2)
+    single_yr_grp_pie.markdown('***')
 
 
-# Choose category from column 2 to investigate
-for opt in ghist_col_opt:
-    if ghist_group_col_2==opt:
-        sgpie_col_cat_opt = gen_elecs_df.loc[gen_elecs_df['year']==ghist_year][ghist_group_col_2].unique()
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
+    ###### Section for exploring year comparisons
+    ##########################################################################
+    ##########################################################################
 
-sgpie_col_1_cat = sygp_col_1.selectbox(
-    label='Choose category: ',
-    options = sgpie_col_cat_opt,
-    index=0,
-    format_func=format_cat_names,
-    key='gpie_cat'
-)
-
-# Plot basic pie chart
-sygp_pie = grp_pie(
-    gen_elecs_df,
-     ghist_year,
-     ghist_group_col_2,
-      ghist_group_col_1,
-      sgpie_col_1_cat
-)
-single_yr_grp_pie.plotly_chart(sygp_pie, use_container_width=True)
+if side_myr_select_1:
+    ## Histogram grouped by election year
+    # Define container for section
+    grpby_yr = st.beta_container()
+    grpby_yr.header('Compare trends across election years:')
+    grpby_yr.subheader('Explore one variable at a time:')
+    gyr_col_1, gyr_col_2 = grpby_yr.beta_columns(2)
 
 
-single_yr_grp_pie.markdown('***')
-
-
-##########################################################################
-##########################################################################
-##########################################################################
-##########################################################################
-###### Section for exploring year comparisons
-##########################################################################
-##########################################################################
-
-## Histogram grouped by election year
-# Define container for section
-grpby_yr = st.beta_container()
-grpby_yr.header('Compare trends across election years:')
-grpby_yr.subheader('Explore one variable at a time:')
-gyr_col_1, gyr_col_2 = grpby_yr.beta_columns(2)
-
-
-# Choose column to group by/ investigate
-gyrhist_col_opt = [
-    'vote_method_4', 'vote_method_5', 'vote_bin', 
-    'pri_vote_bin', 'birth_age_adj', 'gen_grp',
-    'party_grp', 'gender_code', 'race_grp',
-     'birth_reg_other', 'drivers_lic', 'city_grp'
-]
-gyrhist_group_col = gyr_col_1.selectbox(
-    label='See the distribution of: ',
-    options = gyrhist_col_opt,
-    index=0,
-    format_func=format_col_names,
-    key='gyr_col'
-)
-
-# Choose raw count or percent
-gyrhist_norm = gyr_col_2.radio(
-    label='Display as: ',
-    options = [None, 'percent'],
-    index=0,
-    format_func=norm_label,
-    key='gyr_norm'
-)
-
-# Plot histogram grouped by election year
-gyr_hist = grp_yr_hist(
-    gen_elecs_df,
-     gyrhist_group_col,
-      histnorm=gyrhist_norm
-)
-grpby_yr.plotly_chart(gyr_hist, use_container_width=True)
-
-
-grpby_yr.markdown('***')
-
-##########################################################################
-##########################################################################
-##########################################################################
-## Grouped histogram subplots per year 
-# Define container for section
-multi_yr = st.beta_container()
-multi_yr.header('Compare trends across election years:')
-multi_yr.subheader('Break down trends across 2 variables at a time:')
-myr_col_1, myr_col_2 = multi_yr.beta_columns(2)
-
-
-# Choose 1st column to group by/ investigate
-myrhist_col_opt = [
-    'vote_method_4', 'vote_method_5', 'vote_bin', 
-    'pri_vote_bin', 'gen_grp',
-    'party_grp', 'gender_code', 'race_grp',
-    'birth_reg_other', 'drivers_lic', 'city_grp'
-]
-
-vote_method_opts = [
-    'vote_method_4', 'vote_method_5', 'vote_bin'
-]
-
-non_vote_method_opts = [
-    'pri_vote_bin', 'gen_grp',
-    'party_grp', 'gender_code', 'race_grp',
-    'birth_reg_other', 'drivers_lic', 'city_grp'
-]
-
-myrhist_group_col_1 = myr_col_1.selectbox(
-    label='Group by: ',
-    options = myrhist_col_opt,
-    index=2,
-    format_func=format_col_names,
-    key='m_grp_col_1'
-)
-
-# Choose 2nd column to group by/ investigate
-if myrhist_group_col_1 in vote_method_opts:
-    myrhist_group_col_2 = myr_col_1.selectbox(
-        label='Then by: ',
-        options = non_vote_method_opts,
-        index=1,
+    # Choose column to group by/ investigate
+    gyrhist_col_opt = [
+        'vote_method_4', 'vote_method_5', 'vote_bin', 
+        'pri_vote_bin', 'birth_age_adj', 'gen_grp',
+        'party_grp', 'gender_code', 'race_grp',
+        'birth_reg_other', 'drivers_lic', 'city_grp'
+    ]
+    gyrhist_group_col = gyr_col_1.selectbox(
+        label='See the distribution of: ',
+        options = gyrhist_col_opt,
+        index=0,
         format_func=format_col_names,
-        key='m_grp_col_2'
+        key='gyr_col'
     )
 
-else: 
-    myrhist_group_col_2 = myr_col_1.selectbox(
+    # Choose raw count or percent
+    gyrhist_norm = gyr_col_2.radio(
+        label='Display as: ',
+        options = [None, 'percent'],
+        index=0,
+        format_func=norm_label,
+        key='gyr_norm'
+    )
+
+    # Plot histogram grouped by election year
+    gyr_hist = grp_yr_hist(
+        gen_elecs_df,
+        gyrhist_group_col,
+        histnorm=gyrhist_norm
+    )
+    grpby_yr.plotly_chart(gyr_hist, use_container_width=True)
+
+    grpby_yr.markdown('***')
+
+
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
+if side_myr_select_2:
+    ## Grouped histogram subplots per year 
+    # Define container for section
+    multi_yr = st.beta_container()
+    multi_yr.header('Compare trends across election years:')
+    multi_yr.subheader('Break down trends across 2 variables at a time:')
+    myr_col_1, myr_col_2, myr_col_3 = multi_yr.beta_columns(3)
+
+
+    # Choose 1st column to group by/ investigate
+    myrhist_col_opt = [
+        'vote_method_4', 'vote_method_5', 'vote_bin', 
+        'pri_vote_bin', 'gen_grp',
+        'party_grp', 'gender_code', 'race_grp',
+        'birth_reg_other', 'drivers_lic', 'city_grp'
+    ]
+
+    vote_method_opts = [
+        'vote_method_4', 'vote_method_5', 'vote_bin'
+    ]
+
+    non_vote_method_opts = [
+        'pri_vote_bin', 'gen_grp',
+        'party_grp', 'gender_code', 'race_grp',
+        'birth_reg_other', 'drivers_lic', 'city_grp'
+    ]
+
+    myrhist_group_col_1 = myr_col_1.selectbox(
+        label='Group by: ',
+        options = myrhist_col_opt,
+        index=2,
+        format_func=format_col_names,
+        key='m_grp_col_1'
+    )
+
+    # Choose 2nd column to group by/ investigate
+    if myrhist_group_col_1 in vote_method_opts:
+        myrhist_group_col_2 = myr_col_1.selectbox(
             label='Then by: ',
-            options = myrhist_col_opt,
+            options = non_vote_method_opts,
             index=1,
             format_func=format_col_names,
             key='m_grp_col_2'
         )
 
-
-# Choose raw count or percent
-myrhist_norm = myr_col_2.radio(
-    label='Display as: ',
-    options = [None, 'percent'],
-    index=0,
-    format_func=norm_label,
-    key='myr_norm'
-)
-
-
-# Grouped histogram subplots for each election year
-myr_hist = multi_yr_hist(
-    gen_elecs_df, 
-    myrhist_group_col_1, 
-    myrhist_group_col_2,
-    histnorm=myrhist_norm,
-    width=900, height=450
-)
-multi_yr.plotly_chart(myr_hist, use_container_width=False)
-
-##########################################################################
-## Grouped pie charts for each year
-# Define container for section
-multi_yr_grp_pie = st.beta_container()
-mygp_col_1, mygp_col_2 = multi_yr_grp_pie.beta_columns(2)
+    else: 
+        myrhist_group_col_2 = myr_col_1.selectbox(
+                label='Then by: ',
+                options = myrhist_col_opt,
+                index=1,
+                format_func=format_col_names,
+                key='m_grp_col_2'
+            )
 
 
-# Choose category from column 2 to investigate
-for opt in myrhist_col_opt:
-    if myrhist_group_col_2==opt:
-        mygpie_col_cat_opt = gen_elecs_df[myrhist_group_col_2].unique()
+    # Choose raw count or percent
+    myrhist_norm = myr_col_2.radio(
+        label='Display as: ',
+        options = [None, 'percent'],
+        index=0,
+        format_func=norm_label,
+        key='myr_norm'
+    )
 
-mygpie_col_1_cat = mygp_col_1.selectbox(
-    label='Choose category: ',
-    options = mygpie_col_cat_opt,
-    index=1,
-    format_func=format_cat_names,
-    key='mygpie_cat'
-)
 
-# Plot basic pie chart
-mygp_pie = multi_grp_pie(
-    gen_elecs_df,
-     myrhist_group_col_2,
-      myrhist_group_col_1,
-      mygpie_col_1_cat
-)
-multi_yr_grp_pie.plotly_chart(mygp_pie, use_container_width=False)
+    # Choose bar type
+    myrhist_bar = myr_col_3.radio(
+        label='Bar type: ',
+        options = ['Grouped', 'Stacked'],
+        index=0,
+        key='myr_bar'
+    )
+
+
+    # Plot grouped histogram for a single year
+    if myrhist_bar=='Grouped':
+        myr_hist = multi_yr_hist(
+            gen_elecs_df, 
+            myrhist_group_col_1, 
+            myrhist_group_col_2,
+            histnorm=myrhist_norm,
+            width=900, height=450
+            )
+    if myrhist_bar=='Stacked':
+        myr_hist = stack_multi_yr_hist(
+            gen_elecs_df,
+            myrhist_group_col_1,
+            myrhist_group_col_2,
+            percent=myrhist_norm
+        )
+
+    multi_yr.plotly_chart(myr_hist, use_container_width=False)
+
+    
+    ##########################################################################
+    ##########################################################################
+    ## Grouped pie charts for each year
+    # Define container for section
+    multi_yr_grp_pie = st.beta_container()
+    mygp_col_1, mygp_col_2 = multi_yr_grp_pie.beta_columns(2)
+
+
+    # Choose category from column 2 to investigate
+    if myrhist_group_col_2=='gen_grp':
+        mygpie_col_cat_opt = [
+            'Millennial', 'GenX',
+            'Boomer', 'Greatest-Silent'
+        ]
+
+    else:
+        for opt in myrhist_col_opt:
+            if myrhist_group_col_2==opt:
+                mygpie_col_cat_opt = gen_elecs_df[myrhist_group_col_2].unique()
+
+    mygpie_col_1_cat = mygp_col_1.selectbox(
+        label='Choose category: ',
+        options = mygpie_col_cat_opt,
+        index=1,
+        format_func=format_cat_names,
+        key='mygpie_cat'
+    )
+
+    # Plot basic pie chart
+    mygp_pie = multi_grp_pie(
+        gen_elecs_df,
+        myrhist_group_col_2,
+        myrhist_group_col_1,
+        mygpie_col_1_cat
+    )
+    multi_yr_grp_pie.plotly_chart(mygp_pie, use_container_width=False)
+
+    genZ_note = multi_yr_grp_pie.beta_expander('Why is Gen Z not a category option?')
+    genZ_note.write(
+        """
+        Gen Z is not a category here because there is no 2012 plot for this age group.
+        No one belonging to this age group was old enough to vote during this election 
+        year. The 2016 and 2020 pie charts for Gen Z can be viewed when grouping by two
+        variables in the single election year section.
+        """
+    )
