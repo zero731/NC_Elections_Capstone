@@ -32,7 +32,7 @@ def check_unique(col, df, dropna=False):
     unique_vals['count'] = pd.Series(df[col].value_counts(dropna=dropna))
     unique_vals['%'] = pd.Series(round(df[col].value_counts(normalize=True, dropna=dropna)*100, 2))
     
-    return unique_vals
+    display(unique_vals.style.set_caption(col))
 
 
 #################################################################################
@@ -42,7 +42,7 @@ def check_unique(col, df, dropna=False):
 #################################################################################
 
 
-def plot_count(variable, data, rotation=0, figsize=(10,7)):
+def plot_count(variable, data, rotation=0, ha='center', figsize=(10,7)):
     """Takes in a variable/ column name and the DataFrame containing the column
     and returns a countplot for that variable with counts in descending order.
 
@@ -51,6 +51,8 @@ def plot_count(variable, data, rotation=0, figsize=(10,7)):
         data (DataFrame): Pandas DataFrame with the column of interest
         rotation (int, optional): The degree to rotate the x-axis labels.
             Defaults to 0.
+        ha (str, optional): The horizontal alignment for the x-tick labels.
+            Defaults to 'center'.
         figsize (tuple, optional): The size of the resulting figure.
             Defaults to (10,7).
 
@@ -66,7 +68,7 @@ def plot_count(variable, data, rotation=0, figsize=(10,7)):
                        order=data[variable].value_counts().index,
                        palette='nipy_spectral')
     
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation, horizontalalignment=ha)
     ax.set_title('{} Counts'.format(variable.title()), fontsize=16, weight='bold')
     ax.set_xlabel('{}'.format(variable), fontsize=14, weight='bold')
     ax.set_ylabel('Count', fontsize=14, weight='bold')
