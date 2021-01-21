@@ -467,25 +467,7 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
 
     filtered_df = df.loc[df['year']==int(year)] 
 
-    if group_col_1 == 'birth_age_adj':
-        labels.update({'birth_age_adj': 'Age'})
-        fig = px.histogram(
-            filtered_df, x=group_col_1, color=group_col_2,
-            color_discrete_map=color_map, barmode=barmode,
-            title='{} by {} <br> in {} General Election'.format(
-                labels[group_col_1],
-                labels[group_col_2],
-                str(year)
-                ), 
-                category_orders=cat_orders,
-                labels=labels,
-                template=template,
-                histnorm=histnorm,
-                nbins=50
-                )
-
-    else:
-        fig = px.histogram(filtered_df, x=group_col_1, color=group_col_2,
+    fig = px.histogram(filtered_df, x=group_col_1, color=group_col_2,
                        color_discrete_map=color_map, barmode=barmode, 
                        title='{} by {} <br> in {} General Election'.format(
                            labels[group_col_1],
@@ -501,6 +483,299 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
         fig.update_yaxes(title='Percent of Registered Voters')
         
     if histnorm==None:
+        fig.update_yaxes(title='Number of Registered Voters')
+    
+
+    fig.update_layout(
+        title=title_dict,
+        legend = leg_dict
+        )
+
+    fig.update_yaxes(
+        title_font=ax_title_font_dict,
+        tickfont=ax_tick_font_dict
+    )
+
+    fig.update_xaxes(
+        title_font=ax_title_font_dict,
+        tickfont=ax_tick_font_dict
+    )
+
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+
+    return fig
+
+
+
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+
+
+
+def stack_grp_hist(df, year, group_col_1, group_col_2, title=None, 
+                   percent=None, template='seaborn',
+                   save=False, fig_name=None):
+    """Takes a DataFrame with a year column, groups the df by the first
+        column specified, then color-codes by the second provided column
+        to create a stacked Plotly bar chart for the specified election year.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        year (int): Election year (2012, 2016, or 2020 only)
+        group_col_1 (str): Name of the df column by which to group
+        group_col_2 (str): Name of the df column by which to color-code the histograms
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to 'labels[{group_col_1}] by labels[{group_col_2}] in {year} General Election'.
+        barmode (str, optional): Plotly barmode parameter. Defaults to 'group'.
+        histnorm (str, optional): Plotly histnorm parameter, but only takes None or 'percent'.
+             Defaults to None.
+        percent (str, optional): If 'percent', plots bars as percentages.
+            If None, plots as raw counts. Defaults to None.
+        template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        save (bool, optional): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Plotly stacked bar chart grouped by group_col_1 and color-coded
+            according to group_col_2 for the specified election year. 
+    """    
+    import pandas as pd
+    import plotly.express as px
+    import matplotlib.pyplot as plt
+
+
+    fig_filepath = 'Figures/'
+
+    title_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':24
+        }
+    }
+
+    leg_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':13
+        },
+        'title': ''
+    }
+
+    ax_title_font_dict = {
+        'family':'Arial Black',
+        'size':18
+    }
+
+    ax_tick_font_dict = {
+        'family':'Arial Black',
+        'size':15
+    }
+
+
+    cat_orders = {}
+    labels = {}
+
+
+    if group_col_2 == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millennial': 'gold',
+            'GenZ': 'coral'
+        }
+    if (group_col_1 == 'gen_grp') | (group_col_2 == 'gen_grp'):
+        cat_orders.update({'gen_grp': ['GenZ', 'Millennial', 'GenX',
+                                         'Boomer', 'Greatest-Silent']})
+        labels.update({'gen_grp': 'Generation'})
+
+
+    if group_col_2 == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+    if (group_col_1 == 'party_grp') | (group_col_2 == 'party_grp'):
+        cat_orders.update({'party_grp': ['Dem', 'Rep', 'Other']})
+        labels.update({'party_grp': 'Party'})
+
+
+    if group_col_2 == 'vote_method_4':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Other': 'aqua'
+        }
+    if (group_col_1 == 'vote_method_4') | (group_col_2 == 'vote_method_4'):
+        cat_orders.update({'vote_method_4': ['Early', 'No Vote',
+                                        'Election Day', 'Other']})
+        labels.update({'vote_method_4': 'Voting Method'})
+
+
+    if group_col_2 == 'vote_method_5':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Mail': 'blue',
+            'Other': 'aqua'
+        }
+    if (group_col_1 == 'vote_method_5') | (group_col_2 == 'vote_method_5'):
+        cat_orders.update({'vote_method_5': ['Early', 'No Vote',
+                                        'Election Day', 'Mail',
+                                        'Other']})
+        labels.update({'vote_method_5': 'Voting Method'})
+
+
+    if group_col_2 == 'vote_bin':
+        color_map = {
+            'Y': 'blue',
+            'N': 'goldenrod'
+        }
+    if (group_col_1 == 'vote_bin') | (group_col_2 == 'vote_bin'):
+        cat_orders.update({'vote_bin': ['Y', 'N']})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
+
+
+    if group_col_2 == 'pri_vote_bin':
+        color_map = {
+            'Y': 'blue',
+            'N': 'goldenrod'
+        }
+    if (group_col_1 == 'pri_vote_bin') | (group_col_2 == 'pri_vote_bin'):
+        cat_orders.update({'pri_vote_bin': ['Y', 'N']})
+        labels.update({'pri_vote_bin': 'Voted in Primary'})
+
+
+    if group_col_2 == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+    if (group_col_1 == 'race_grp') | (group_col_2 == 'race_grp'):
+        cat_orders.update({'race_grp': ['White',
+                                        'Black',
+                                        'Undesig.',
+                                        'Other']})
+        labels.update({'race_grp': 'Race'})
+
+
+    if group_col_2 == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+    if (group_col_1 == 'gender_code') | (group_col_2 == 'gender_code'):
+        cat_orders.update({'gender_code': ['F', 'M', 'U']})
+        labels.update({'gender_code': 'Gender'})
+
+
+    if group_col_2 == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+    if (group_col_1 == 'birth_reg_other') | (group_col_2 == 'birth_reg_other'):
+        cat_orders.update({'birth_reg_other': ['South',
+                                               'Missing',
+                                               'Northeast',
+                                               'Midwest',
+                                               'Other',
+                                               'West']})
+        labels.update({'birth_reg_other': 'Birth Region'})
+
+
+    if group_col_2 == 'drivers_lic':
+        color_map = {
+            'License': 'green',
+            'No License': 'crimson'
+        }
+    if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
+        cat_orders.update({'drivers_lic': ['License', 'No License']})
+        labels.update({'drivers_lic': 'Drivers License'})
+
+
+    if group_col_2 == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926'
+        }
+    if (group_col_1 == 'city_grp') | (group_col_2 == 'city_grp'):
+        cat_orders.update({'city_grp': ['Monroe',
+                                        'Waxhaw',
+                                        'Indian Trail',
+                                        'Matthews',
+                                        'Other']})
+        labels.update({'city_grp': 'City'})
+
+
+
+    filtered_df = df.loc[df['year']==int(year)].copy() 
+    
+    df_slice = filtered_df[[group_col_1, group_col_2, 'year']]
+    grpby_slice = df_slice.groupby([group_col_1, group_col_2]).count()
+    grpby_slice.reset_index(inplace=True)
+    grpby_slice.rename(columns={'year':'Count'}, inplace=True)
+    
+    total_count_slice = df_slice.drop(
+        columns=['year']
+    ).groupby([group_col_1]).count()
+    
+    total_count_slice.reset_index(inplace=True)
+    total_count_slice.rename(columns={group_col_2:'Total'}, inplace=True)
+    
+    merge_slice = grpby_slice.merge(total_count_slice, on=group_col_1)
+    merge_slice['Percent'] = round(
+        (merge_slice['Count'] / merge_slice['Total'])*100, 2
+    )
+
+    if percent:
+        fig = px.bar(merge_slice, x=group_col_1, y='Percent',
+                           color=group_col_2, color_discrete_map=color_map, 
+                           title='{} by {} <br> in {} General Election'.format(
+                               labels[group_col_1],
+                               labels[group_col_2],
+                               str(year)
+                               ), 
+                           category_orders=cat_orders,
+                           labels=labels,
+                           template=template
+                          )
+        fig.update_yaxes(title='Percent of Registered Voters')
+    
+    
+    
+    else:
+        fig = px.bar(merge_slice, x=group_col_1, y='Count',
+                           color=group_col_2, color_discrete_map=color_map, 
+                           title='{} by {} <br> in {} General Election'.format(
+                               labels[group_col_1],
+                               labels[group_col_2],
+                               str(year)
+                               ), 
+                           category_orders=cat_orders,
+                           labels=labels,
+                           template=template
+                          )
         fig.update_yaxes(title='Number of Registered Voters')
     
 
@@ -978,26 +1253,7 @@ def multi_yr_hist(df, group_col_1, group_col_2,
         labels.update({'city_grp': 'City'})
     
     
-    if group_col_1 == 'birth_age_adj':
-        labels.update({'birth_age_adj': 'Age'})
-        fig = px.histogram(df, x=group_col_1, color=group_col_2,
-                           color_discrete_map=color_map, barmode=barmode, 
-                           title='{} by {} in General Elections'.format(
-                               labels[group_col_1], labels[group_col_2]
-                           ),
-                            facet_col=facet_feat,
-                           category_orders=cat_orders,
-                           labels=labels,
-                           histnorm=histnorm,
-                           template=template,
-                           width=width, height=height,
-                           facet_col_spacing=facet_spacing,
-                           nbins=50
-                          )
-        
-    
-    else:
-        fig = px.histogram(df, x=group_col_1, color=group_col_2,
+    fig = px.histogram(df, x=group_col_1, color=group_col_2,
                            color_discrete_map=color_map, barmode=barmode, 
                            title='{} by {} in General Elections'.format(
                                labels[group_col_1], labels[group_col_2]
@@ -1054,6 +1310,348 @@ def multi_yr_hist(df, group_col_1, group_col_2,
 
 
     
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+
+
+
+def stack_multi_yr_hist(df, group_col_1, group_col_2,
+                        facet_feat='year', facet_spacing=0.05,
+                        title=None, percent=None,
+                        template='seaborn', width=1000, height=450,
+                        save=False, fig_name=None):
+    """Takes a DataFrame with a year column, groups the df by the first
+        column specified, then color-codes by the second provided column
+        to create a Plotly stacked bar chart subplot, one for each election 
+        year.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        group_col_1 (str): Name of the df column by which to group
+        group_col_2 (str): Name of the df column by which to color-code the histograms
+        facet_feat (str, optional): Name of column for which to create subplots.
+             Defaults to 'year'.
+        facet_spacing (float, optional): Spacing parameter for Plotly subplots.
+             Defaults to 0.05.
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to 'labels[{group_col_1}] by labels[{group_col_2}] General Elections'.
+        percent (str, optional): If 'percent', plots bars as percentages.
+            If None, plots as raw counts. Defaults to None.
+        template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        width (int, optional): Width of figure. Defaults to 1000.
+        height (int, optional): Height of figure. Defaults to 450.
+        save (bool, optional): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Plotly stacked bar charts grouped by group_col_1 and color-coded
+            according to group_col_2, with one plot for each year. 
+    """    
+
+    
+    import pandas as pd
+    import plotly.express as px
+    import matplotlib.pyplot as plt
+
+
+    fig_filepath = 'Figures/'
+
+    title_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':24
+        },
+        'yref':'container',
+        'y':0.92
+    }
+
+    leg_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':13
+        },
+        'title': ''
+    }
+
+    ax_title_font_dict = {
+        'family':'Arial Black',
+        'size':18
+    }
+
+    xax_tick_font_dict = {
+        'family':'Arial Black',
+        'size':13
+    }
+
+    yax_tick_font_dict = {
+        'family':'Arial Black',
+        'size':15
+    }
+
+    ann_dict = {
+        'font': {
+            'family':'Arial Black',
+        'size': 18
+        },
+        'yref':'paper',
+        'y':0.99
+    }
+
+
+    cat_orders = {'year': [2012, 2016, 2020]}
+    labels = {}
+    
+    
+    if group_col_2 == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millennial': 'gold',
+            'GenZ': 'coral'
+        }
+    if (group_col_1 == 'gen_grp') | (group_col_2 == 'gen_grp'):
+        cat_orders.update({'gen_grp': ['GenZ', 'Millennial', 'GenX',
+                                         'Boomer', 'Greatest-Silent']})
+        labels.update({'gen_grp': 'Generation'})
+    
+    
+    if group_col_2 == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+    if (group_col_1 == 'party_grp') | (group_col_2 == 'party_grp'):
+        cat_orders.update({'party_grp': ['Dem', 'Rep', 'Other']})
+        labels.update({'party_grp': 'Party'})
+    
+    
+    if group_col_2 == 'vote_method_4':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Other': 'aqua'
+        }
+    if (group_col_1 == 'vote_method_4') | (group_col_2 == 'vote_method_4'):
+        cat_orders.update({'vote_method_4': ['Early', 'No Vote',
+                                        'Election Day', 'Other']})
+        labels.update({'vote_method_4': 'Voting Method'})
+        
+        
+    if group_col_2 == 'vote_method_5':
+        color_map = {
+            'Early': 'navy',
+            'No Vote': 'goldenrod',
+            'Election Day': 'teal',
+            'Mail': 'blue',
+            'Other': 'aqua'
+        }
+    if (group_col_1 == 'vote_method_5') | (group_col_2 == 'vote_method_5'):
+        cat_orders.update({'vote_method_5': ['Early', 'No Vote',
+                                        'Election Day', 'Mail',
+                                        'Other']})
+        labels.update({'vote_method_5': 'Voting Method'})
+    
+    
+    if group_col_2 == 'vote_bin':
+        color_map = {
+            'Y': 'blue',
+            'N': 'goldenrod'
+        }
+    if (group_col_1 == 'vote_bin') | (group_col_2 == 'vote_bin'):
+        cat_orders.update({'vote_bin': ['Y', 'N']})
+        labels.update({'vote_bin': 'Voted (Y/N)'})
+
+    
+    if group_col_2 == 'pri_vote_bin':
+        color_map = {
+            'Y': 'blue',
+            'N': 'goldenrod'
+        }
+    if (group_col_1 == 'pri_vote_bin') | (group_col_2 == 'pri_vote_bin'):
+        cat_orders.update({'pri_vote_bin': ['Y', 'N']})
+        labels.update({'pri_vote_bin': 'Voted in Primary'})
+    
+        
+    if group_col_2 == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+    if (group_col_1 == 'race_grp') | (group_col_2 == 'race_grp'):
+        cat_orders.update({'race_grp': ['White',
+                                        'Black',
+                                        'Undesig.',
+                                        'Other']})
+        labels.update({'race_grp': 'Race'})
+    
+    
+    if group_col_2 == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+    if (group_col_1 == 'gender_code') | (group_col_2 == 'gender_code'):
+        cat_orders.update({'gender_code': ['F', 'M', 'U']})
+        labels.update({'gender_code': 'Gender'})
+        
+        
+    if group_col_2 == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+    if (group_col_1 == 'birth_reg_other') | (group_col_2 == 'birth_reg_other'):
+        cat_orders.update({'birth_reg_other': ['South',
+                                               'Missing',
+                                               'Northeast',
+                                               'Midwest',
+                                               'Other',
+                                               'West']})
+        labels.update({'birth_reg_other': 'Birth Region'})
+    
+    
+    if group_col_2 == 'drivers_lic':
+        color_map = {
+            'License': 'green',
+            'No License': 'crimson'
+        }
+    if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
+        cat_orders.update({'drivers_lic': ['License', 'No License']})
+        labels.update({'drivers_lic': 'Drivers License'})
+        
+    
+    if group_col_2 == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926'
+        }
+    if (group_col_1 == 'city_grp') | (group_col_2 == 'city_grp'):
+        cat_orders.update({'city_grp': ['Monroe',
+                                        'Waxhaw',
+                                        'Indian Trail',
+                                        'Matthews',
+                                        'Other']})
+        labels.update({'city_grp': 'City'})
+    
+    
+    df_slice = df.copy()
+    df_slice = df_slice[[group_col_1, group_col_2, facet_feat, 'birth_age_adj']]
+    grpby_slice = df_slice.groupby([
+        facet_feat, group_col_1, group_col_2
+    ]).count()
+    grpby_slice.reset_index(inplace=True)
+    grpby_slice.rename(columns={'birth_age_adj':'Count'}, inplace=True)
+    
+
+    total_count_slice = df.copy()
+    total_count_slice = total_count_slice.drop(
+            columns=['birth_age_adj']
+        ).groupby(
+            [facet_feat,group_col_1]
+        ).count()
+    total_count_slice.reset_index(inplace=True)
+    total_count_slice.rename(columns={group_col_2:'Total'}, inplace=True)
+    
+
+    merge_slice = grpby_slice.merge(total_count_slice,
+                                     on=[facet_feat,group_col_1])
+    merge_slice['Percent'] = round(
+            (merge_slice['Count'] / merge_slice['Total']) * 100, 2
+        )
+    
+    
+    
+    if percent:
+        fig = px.bar(merge_slice, x=group_col_1, y='Percent', 
+                     color=group_col_2, color_discrete_map=color_map,
+                     title='{} by {} in General Elections'.format(
+                         labels[group_col_1],
+                         labels[group_col_2]
+                     ), 
+                               facet_col=facet_feat,
+                               category_orders=cat_orders,
+                               labels=labels,
+                               template=template,
+                               width=width, height=height,
+                               facet_col_spacing=facet_spacing
+                          )
+        fig.update_yaxes(title='Percent of Registered Voters')  
+        
+        
+        
+    else:
+        fig = px.bar(merge_slice, x=group_col_1, y='Count', 
+                     color=group_col_2, color_discrete_map=color_map,
+                     title='{} by {} in General Elections'.format(
+                         labels[group_col_1],
+                         labels[group_col_2]
+                     ), 
+                               facet_col=facet_feat,
+                               category_orders=cat_orders,
+                               labels=labels,
+                               template=template,
+                               width=width, height=height,
+                               facet_col_spacing=facet_spacing
+                          )
+        fig.update_yaxes(title='Number of Registered Voters')
+        
+        
+    
+    fig.update_yaxes(title_text='',row=1, col=2)
+    fig.update_yaxes(title_text='',row=1, col=3)
+
+    fig.update_xaxes(title_text='',row=1, col=1)
+    fig.update_xaxes(title_text='',row=1, col=3)
+
+    fig.update_layout(
+        title=title_dict,
+        legend=leg_dict
+        )
+
+    fig.update_yaxes(
+        title_font=ax_title_font_dict,
+        tickfont=yax_tick_font_dict
+    )
+
+    fig.update_xaxes(
+        title_font=ax_title_font_dict,
+        tickfont=xax_tick_font_dict
+    )
+
+    fig.for_each_annotation(
+        lambda x: x.update(text=x.text.split("=")[-1])
+    )
+
+    fig.update_annotations(
+        ann_dict
+    )
+
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+
+    return fig
+
+
+
 #################################################################################
 #################################################################################
 #################################################################################
