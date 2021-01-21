@@ -2437,7 +2437,6 @@ st.set_page_config(
 )
 
 
-
 ##########################################################################
 ##########################################################################
 ##########################################################################
@@ -2480,6 +2479,17 @@ side_myr_select_2 = st.sidebar.checkbox(
     key='myr_select_2'
 )
 
+st.sidebar.write('')
+st.sidebar.write('')
+st.sidebar.write('')
+st.sidebar.write('')
+st.sidebar.markdown(
+    """
+    **Questions or feedback?**\n
+    Please feel free to contact me: 
+    <maxsteele731@gmail.com>
+    """
+)
 
 
 ##########################################################################
