@@ -163,7 +163,6 @@ As Democrats in North Carolina seek to increase turnout for their candidates in 
 Currently my plans for future work with this project include:
  - Scaling up to a statewide analysis once all North Carolina counties have finalized their voter history records and statistics for the 2020 general election.
  - Further investigating the interaction effects among demographic features for each election year in Union County.
- - Retraining models using SMOTENC rather than SMOTE.
  - Adding the following sections to my Union County registered voters dashboard:
     - A section to explore trends in voter registration status (Active, Removed, Denied, Inactive).
     - A section to compare the current registered voter population to the most recent U.S. Census data for Union County.
