@@ -2561,13 +2561,12 @@ plotly_note = intro.beta_expander(
 )
 plotly_note.markdown(
     """
-    The graphs you can create are interactive and were created using 
-    [Plotly](https://plotly.com/). As you hover over the a graph,
-    certain information will be displayed and a Modebar will appear. 
-    Find a tutorial on how to use the Modebar 
+    The graphs are all interactive and are created using 
+    [Plotly](https://plotly.com/). As you hover over a graph,
+    certain information will be displayed and you have options to zoom
+    in/out, switch to fullscreen, and adjust which information is displayed. 
+    Find a tutorial 
     [here](https://plotly.com/chart-studio-help/getting-to-know-the-plotly-modebar/).
-    You can switch to a fullscreen view by clicking on the divergent 
-    arrows associated with the Modebar.
     """
 )
 
