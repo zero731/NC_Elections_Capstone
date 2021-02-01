@@ -1,17 +1,23 @@
-NC_full_voter_elecs.gz
-NC_full_voter_elecs_final.gz
-NC_gen_2012.gz
-NC_gen_2014.gz
-NC_gen_2016.gz
-NC_gen_2018.gz
-NC_gen_2020.gz
-NC_gen_2020_clean.gz
-NC_ncid_summary.gz
-NC_voters.gz
-ncvhis_Statewide.zip
-ncvhis_Statewide_Jan4.zip
-ncvoter_Statewide.zip
-ncvoter_Statewide_Jan4.zip
+# NC_full_voter_elecs.gz
+# NC_full_voter_elecs_final.gz
+# NC_gen_2012.gz
+# NC_gen_2014.gz
+# NC_gen_2016.gz
+# NC_gen_2018.gz
+# NC_gen_2020.gz
+# NC_gen_2020_clean.gz
+# NC_ncid_summary.gz
+# NC_voters.gz
+# ncvhis_Statewide.zip
+# ncvhis_Statewide_Jan4.zip
+# ncvoter_Statewide.zip
+# ncvoter_Statewide_Jan4.zip
+
+# Data Folder
+Data/
+
+# DS_Store
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
