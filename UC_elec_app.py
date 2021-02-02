@@ -7,8 +7,8 @@ from plotly.subplots import make_subplots
 
 
 ## Import DataFrames
-gen_elecs_df = pd.read_csv('Data/UC_gen_elecs.gz')
-uc_vreg_df = pd.read_csv('Data/UC_vreg_Jan4.gz')
+gen_elecs_df = pd.read_csv('App_Data/UC_gen_elecs.gz')
+uc_vreg_df = pd.read_csv('App_Data/UC_vreg_Jan4.gz')
 
 ## Recast registr_dt as datetime variable
 uc_vreg_df['registr_dt'] = pd.to_datetime(uc_vreg_df['registr_dt'])
