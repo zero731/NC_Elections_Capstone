@@ -32,6 +32,7 @@ def format_col_names(name):
         'vote_bin': 'Voted (Y/N)',
         'pri_vote_bin': 'Voted in Primary (Y/N)',
         'birth_age_adj': 'Age',
+        'birth_age': 'Age',
         'gen_grp': 'Generation',
         'party_grp': 'Political Party',
         'gender_code': 'Gender',
@@ -88,12 +89,13 @@ def norm_label(arg):
 ##########################################################################
 
 
-#################################################################################
-#################################################################################
-#################################################################################
-#################################################################################
-#################################################################################
-#################################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+###### Voter Turnout Page Functions
+##########################################################################
+##########################################################################
 
 
 @st.cache
@@ -2424,6 +2426,871 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
 #################################################################################
 #################################################################################
 
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+###### Voter Registration Page Functions
+##########################################################################
+##########################################################################
+
+@st.cache
+def registr_pie(df, col, title=None,
+                  template='seaborn', showlegend=True, save=False, fig_name=None):
+    """Takes a DataFrame and returns a Plotly pie chart for the provided
+        column in that DataFrame.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        col (str): Name of the df column by which to group
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to 'Registered Voters by {col}'.
+        template (str, optional): [description]. Defaults to 'seaborn'.
+        showlegend (bool, optional): Whether to display the figure legend.
+            Defaults to True.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Plotly pie chart color-coded according to col. 
+    """    
+
+    fig_filepath = 'Figures/'
+    
+    title_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':24
+        },
+        'xref': 'paper',
+        'yref': 'paper'
+    }
+
+    leg_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':13
+        }
+    }
+    
+    
+    labels={}
+    
+    if col == 'birth_age':
+        col='gen_grp'
+
+    if col == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millennial': 'gold',
+            'GenZ': 'coral'
+        }
+        labels.update({'gen_grp': 'Generation'})
+    
+    
+    if col == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+        labels.update({'party_grp': 'Party'})
+    
+    
+    if col == 'voter_status_desc':
+        color_map = {
+            'Active': 'limegreen',
+            'Inactive': 'steelblue',
+            'Removed': 'maroon',
+            'Denied': 'orangered',
+            'Temp': 'gold'
+        }
+        labels.update({'voter_status_desc': 'Registration Status'})
+        
+    
+    if col == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+        labels.update({'race_grp': 'Race'})
+    
+    
+    if col == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+        labels.update({'gender_code': 'Gender'})
+        
+        
+    if col == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+        labels.update({'birth_reg_other': 'Birth Region'})
+    
+    
+    if col == 'drivers_lic':
+        color_map = {
+            'License': 'green',
+            'No License': 'crimson'
+        }
+        labels.update({'drivers_lic': 'Drivers License'})
+        
+    
+    if col == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926',
+            'Missing': '#EEA6FB'
+        }
+        labels.update({'city_grp': 'City'})
+    
+    
+    grouped_df = df.groupby([col]).size().to_frame().reset_index()
+    grouped_df.rename(columns={0: 'Count'}, inplace=True)
+    
+    if title==None:
+        title='Registered Voters by {}'.format(
+                     labels[col]
+                 )
+
+    fig = px.pie(grouped_df, values='Count', names=col,
+                 title=title,
+                 color=col,
+                 color_discrete_map=color_map,
+                 template=template,
+                 labels=labels)
+    
+    fig.update_traces(hoverinfo='label+value', textinfo='percent',
+                      textfont_size=15, 
+                      insidetextfont={'family':'Arial Black'},
+                      outsidetextfont={'family':'Arial Black',
+                                       'color': 'black'}
+                     )
+    
+    fig.update_layout(
+        title=title_dict,
+        legend=leg_dict,
+        showlegend=showlegend
+    )
+
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+    
+    return fig
+
+
+
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+
+@st.cache
+def registr_hist(df, col, title=None,
+                  template='seaborn', save=False, fig_name=None):
+    """Takes a DataFrame and returns a color-coded Plotly histogram 
+        for the provided column.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        col (str): Name of the df column for which to plot histogram
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to 'Distribution of labels[{col}] in {year} General Election'.
+        template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Returns Plotly histogram of provided column.
+    """    
+
+    fig_filepath = 'Figures/'
+
+    title_font_dict = {
+        'family':'Arial Black',
+        'size':24
+    }
+    
+    ax_title_font_dict = {
+        'family':'Arial Black',
+        'size':18
+    }
+
+    ax_tick_font_dict = {
+        'family':'Arial Black',
+        'size':15
+    }
+
+    
+    cat_orders = {}
+    labels = {}
+    
+    if col == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millennial': 'gold',
+            'GenZ': 'coral'
+        }
+        cat_orders.update({'gen_grp': ['GenZ', 'Millennial', 'GenX',
+                                         'Boomer', 'Greatest-Silent']})
+        labels.update({'gen_grp': 'Generation'})
+    
+    
+    if col == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+        cat_orders.update({'party_grp': ['Dem', 'Rep', 'Other']})
+        labels.update({'party_grp': 'Party'})
+    
+    
+    if col == 'voter_status_desc':
+        color_map = {
+            'Active': 'limegreen',
+            'Inactive': 'steelblue',
+            'Removed': 'maroon',
+            'Denied': 'orangered',
+            'Temp': 'gold'
+        }
+        cat_orders.update({'voter_status_desc': ['Active',
+                                                 'Inactive',
+                                                 'Removed',
+                                                 'Denied',
+                                                 'Temp']})
+        labels.update({'voter_status_desc': 'Registration Status'})
+    
+            
+    if col == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+        cat_orders.update({'race_grp': ['White',
+                                        'Black',
+                                        'Undesig.',
+                                        'Other']})
+        labels.update({'race_grp': 'Race'})
+    
+    
+    if col == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+        cat_orders.update({'gender_code': ['F', 'M', 'U']})
+        labels.update({'gender_code': 'Gender'})
+        
+        
+    if col == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+        cat_orders.update({'birth_reg_other': ['South',
+                                               'Missing',
+                                               'Northeast',
+                                               'Midwest',
+                                               'Other',
+                                               'West']})
+        labels.update({'birth_reg_other': 'Birth Region'})
+    
+    
+    if col == 'drivers_lic':
+        color_map = {
+            'License': 'green',
+            'No License': 'crimson'
+        }
+        cat_orders.update(
+            {
+                'drivers_lic': [
+                    'License',
+                    'No License'
+                ]
+            }
+            )
+        labels.update({'drivers_lic': 'Drivers License'})
+        
+    
+    if col == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926',
+            'Missing': '#EEA6FB'
+        }
+        cat_orders.update({'city_grp': ['Monroe',
+                                        'Waxhaw',
+                                        'Indian Trail',
+                                        'Matthews',
+                                        'Other',
+                                        'Missing']})
+        labels.update({'city_grp': 'City'})
+        
+   
+    
+    fig = px.histogram(
+        df, x=col, color=col,
+        color_discrete_map=color_map,
+        title='Distribution of {}'.format(
+            labels[col]
+        ),
+        category_orders=cat_orders,
+        labels=labels,
+        template=template
+    )
+    
+
+    fig.update_layout(
+        title_font=title_font_dict,
+        showlegend=False
+        )
+
+    fig.update_yaxes(
+        title='Number of Registered Voters',
+        title_font=ax_title_font_dict,
+        tickfont=ax_tick_font_dict
+    )
+
+    fig.update_xaxes(
+        title_font=ax_title_font_dict,
+        tickfont=ax_tick_font_dict
+    )
+    
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+    
+    return fig
+
+
+
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+
+
+@st.cache
+def registr_stack_bar(df, group_col_1, group_col_2, title=None, 
+                   percent=None, template='seaborn',
+                   save=False, fig_name=None):
+    """Takes a DataFrame, groups the df by the first
+        column specified, then color-codes by the second provided column
+        to create a stacked Plotly bar chart.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        group_col_1 (str): Name of the df column by which to group
+        group_col_2 (str): Name of the df column by which to color-code the bars
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to 'labels[{group_col_1}] by labels[{group_col_2}]'.
+        template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        save (bool, optional): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Plotly stacked bar chart grouped by group_col_1 and color-coded
+            according to group_col_2. 
+    """    
+   
+    fig_filepath = 'Figures/'
+
+    title_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':24
+        }
+    }
+
+    leg_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':13
+        },
+        'title': ''
+    }
+
+    ax_title_font_dict = {
+        'family':'Arial Black',
+        'size':18
+    }
+
+    ax_tick_font_dict = {
+        'family':'Arial Black',
+        'size':15
+    }
+
+
+    cat_orders = {}
+    labels = {}
+
+
+    if group_col_2 == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millennial': 'gold',
+            'GenZ': 'coral'
+        }
+    if (group_col_1 == 'gen_grp') | (group_col_2 == 'gen_grp'):
+        cat_orders.update({'gen_grp': ['GenZ', 'Millennial', 'GenX',
+                                         'Boomer', 'Greatest-Silent']})
+        labels.update({'gen_grp': 'Generation'})
+
+
+    if group_col_2 == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+    if (group_col_1 == 'party_grp') | (group_col_2 == 'party_grp'):
+        cat_orders.update({'party_grp': ['Dem', 'Rep', 'Other']})
+        labels.update({'party_grp': 'Party'})
+
+
+    if group_col_2 == 'voter_status_desc':
+        color_map = {
+            'Active': 'limegreen',
+            'Inactive': 'steelblue',
+            'Removed': 'maroon',
+            'Denied': 'orangered',
+            'Temp': 'gold'
+        }
+    if (group_col_1 == 'voter_status_desc') | (group_col_2 == 'voter_status_desc'):
+        cat_orders.update({'voter_status_desc': ['Active',
+                                                 'Inactive',
+                                                 'Removed',
+                                                 'Denied',
+                                                 'Temp']})
+        labels.update({'voter_status_desc': 'Registration Status'})
+
+
+    if group_col_2 == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+    if (group_col_1 == 'race_grp') | (group_col_2 == 'race_grp'):
+        cat_orders.update({'race_grp': ['White',
+                                        'Black',
+                                        'Undesig.',
+                                        'Other']})
+        labels.update({'race_grp': 'Race'})
+
+
+    if group_col_2 == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+    if (group_col_1 == 'gender_code') | (group_col_2 == 'gender_code'):
+        cat_orders.update({'gender_code': ['F', 'M', 'U']})
+        labels.update({'gender_code': 'Gender'})
+
+
+    if group_col_2 == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+    if (group_col_1 == 'birth_reg_other') | (group_col_2 == 'birth_reg_other'):
+        cat_orders.update({'birth_reg_other': ['South',
+                                               'Missing',
+                                               'Northeast',
+                                               'Midwest',
+                                               'Other',
+                                               'West']})
+        labels.update({'birth_reg_other': 'Birth Region'})
+
+
+    if group_col_2 == 'drivers_lic':
+        color_map = {
+            'License': 'green',
+            'No License': 'crimson'
+        }
+    if (group_col_1 == 'drivers_lic') | (group_col_2 == 'drivers_lic'):
+        cat_orders.update({'drivers_lic': ['License', 'No License']})
+        labels.update({'drivers_lic': 'Drivers License'})
+
+
+    if group_col_2 == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926',
+            'Missing': '#EEA6FB'
+        }
+    if (group_col_1 == 'city_grp') | (group_col_2 == 'city_grp'):
+        cat_orders.update({'city_grp': ['Monroe',
+                                        'Waxhaw',
+                                        'Indian Trail',
+                                        'Matthews',
+                                        'Other',
+                                        'Missing']})
+        labels.update({'city_grp': 'City'})
+
+
+    
+    df_slice = df[[group_col_1, group_col_2, 'reason_cd']]
+    grpby_slice = df_slice.groupby([group_col_1, group_col_2]).count()
+    grpby_slice.reset_index(inplace=True)
+    grpby_slice.rename(columns={'reason_cd':'Count'}, inplace=True)
+    
+    total_count_slice = df_slice.drop(
+        columns=['reason_cd']
+    ).groupby([group_col_1]).count()
+    
+    total_count_slice.reset_index(inplace=True)
+    total_count_slice.rename(columns={group_col_2:'Total'}, inplace=True)
+    
+    merge_slice = grpby_slice.merge(total_count_slice, on=group_col_1)
+    merge_slice['Percent'] = round(
+        (merge_slice['Count'] / merge_slice['Total'])*100, 2
+    )
+
+    
+    x_labels = cat_orders[group_col_1]
+    totals = []
+    for label in x_labels:
+        totals.append(len(df_slice.loc[df_slice[group_col_1]==label]))
+
+    total_labels = [
+        {'x': x,
+         'y': 108,
+         'text': f'{total:,}'+'<br>voters',
+         'showarrow': False,
+         'font_size':13,
+         'font_family': 'Arial Black'} 
+        for x, total in zip(x_labels, totals)
+    ]
+
+    fig = px.bar(merge_slice, x=group_col_1, y='Percent',
+                 color=group_col_2, color_discrete_map=color_map, 
+                 title='{} by {}'.format(
+                     labels[group_col_1],
+                     labels[group_col_2]
+                 ), 
+                 category_orders=cat_orders,
+                 labels=labels,
+                 template=template
+                )
+    fig.update_yaxes(title='Percent of Registered Voters')
+    fig.update_layout(annotations=total_labels)
+
+
+    fig.update_layout(
+        title=title_dict,
+        legend = leg_dict
+        )
+
+    fig.update_yaxes(
+        title_font=ax_title_font_dict,
+        tickfont=ax_tick_font_dict
+    )
+
+    fig.update_xaxes(
+        title_font=ax_title_font_dict,
+        tickfont=ax_tick_font_dict
+    )
+
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+
+    return fig
+
+
+
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+
+
+@st.cache
+def compare_age_distr(df, group_col, group_cat, title=None,
+             template='seaborn', save=False, fig_name=None):
+    """Takes a DataFrame and plots two Plotly histogram traces. First trace 
+       represents age distribution of entire registered voter population. 
+       Second trace groups the df by the column specified,
+       then filters to only include the specified category.
+
+    Args:
+        df (DataFrame): A Pandas DataFrame
+        group_col (str): Name of the df column by which to group for the second trace
+        title (str, optional): Title for the resulting plot. If none is provided,
+            defaults to 'Distribution of Age by {group_col} ({group_cat})'.
+        template (str, optional): Plotly style template. Defaults to 'seaborn'.
+        save (bool, default=False): Whether to save the returned figure. Defaults to False.
+        fig_name (str, optional): What to name the file if the image is being saved.
+            Defaults to None.
+
+    Returns:
+        Figure: Plotly histogram of age and color-coded
+            according to group_col. 
+    """    
+
+
+    fig_filepath = 'Figures/'
+
+    title_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':24
+        }
+    }
+
+    leg_dict = {
+        'font' : {
+            'family':'Arial Black',
+            'size':13
+        },
+        'title': '',
+        'yanchor': 'top',
+        'y':0.98,
+        'xanchor': 'right',
+        'x':0.98
+    }
+
+    ax_title_font_dict = {
+        'family':'Arial Black',
+        'size':18
+    }
+
+    ax_tick_font_dict = {
+        'family':'Arial Black',
+        'size':15
+    }
+
+
+    cat_orders = {}
+    labels = {}
+
+    
+    if group_col == 'gen_grp':
+        color_map = {
+            'Greatest-Silent': 'orchid',
+            'Boomer': 'dodgerblue',
+            'GenX': 'mediumspringgreen',
+            'Millennial': 'gold',
+            'GenZ': 'coral'
+        }
+        cat_orders.update({'gen_grp': ['GenZ', 'Millennial', 'GenX',
+                                         'Boomer', 'Greatest-Silent']})
+        labels.update({'gen_grp': 'Generation'})
+
+
+    if group_col == 'party_grp':
+        color_map = {
+            'Dem': 'blue',
+            'Rep': 'red',
+            'Other': 'gold'
+        }
+        cat_orders.update({'party_grp': ['Dem', 'Rep', 'Other']})
+        labels.update({'party_grp': 'Party'})
+
+
+    if group_col == 'voter_status_desc':
+        color_map = {
+            'Active': 'limegreen',
+            'Inactive': 'steelblue',
+            'Removed': 'maroon',
+            'Denied': 'orangered',
+            'Temp': 'gold'
+        }
+        cat_orders.update({'voter_status_desc': ['Active',
+                                                 'Inactive',
+                                                 'Removed',
+                                                 'Denied',
+                                                 'Temp']})
+        labels.update({'voter_status_desc': 'Registration Status'})
+
+
+    if group_col == 'race_grp':
+        color_map = {
+            'White': 'forestgreen',
+            'Black': 'firebrick',
+            'Undesig.': 'mediumslateblue',
+            'Other': 'fuchsia'
+        }
+        cat_orders.update({'race_grp': ['White',
+                                        'Black',
+                                        'Undesig.',
+                                        'Other']})
+        labels.update({'race_grp': 'Race'})
+
+
+    if group_col == 'gender_code':
+        color_map = {
+            'F': 'deeppink',
+            'M': 'deepskyblue',
+            'U': 'lawngreen'
+        }
+        cat_orders.update({'gender_code': ['F', 'M', 'U']})
+        labels.update({'gender_code': 'Gender'})
+
+
+    if group_col == 'birth_reg_other':
+        color_map = {
+            'South': '#AB63FA',
+            'Missing': '#FFA15A',
+            'Northeast': '#19D3F3',
+            'Midwest': '#FF6692',
+            'Other': '#B6E880',
+            'West': '#FF97FF'
+        }
+        cat_orders.update({'birth_reg_other': ['South',
+                                               'Missing',
+                                               'Northeast',
+                                               'Midwest',
+                                               'Other',
+                                               'West']})
+        labels.update({'birth_reg_other': 'Birth Region'})
+
+
+    if group_col == 'drivers_lic':
+        color_map = {
+            'License': 'green',
+            'No License': 'crimson'
+        }
+        cat_orders.update({'drivers_lic': ['License', 'No License']})
+        labels.update({'drivers_lic': 'Drivers License'})
+
+
+    if group_col == 'city_grp':
+        color_map = {
+            'Monroe': '#FD3216',
+            'Waxhaw': '#00FE35',
+            'Indian Trail': '#6A76FC',
+            'Matthews': '#0DF9FF',
+            'Other': '#F6F926',
+            'Missing': '#EEA6FB'
+        }
+        cat_orders.update({'city_grp': ['Monroe',
+                                        'Waxhaw',
+                                        'Indian Trail',
+                                        'Matthews',
+                                        'Other',
+                                        'Missing']})
+        labels.update({'city_grp': 'City'})
+        
+        
+        
+
+    filtered_df = df.loc[df[group_col]==group_cat]
+    cat_color = color_map[group_cat]
+    
+
+    labels.update({'birth_age': 'Age'})
+    fig = px.histogram(df, x='birth_age',
+                           title='Distribution of Age by {} ({})'.format(
+                               labels[group_col],
+                               group_cat
+                           ),
+                           color_discrete_sequence=['black'],
+                           barmode='overlay',
+                           histnorm='probability density',
+                           labels=labels,
+                           template=template
+                      )
+    fig.update_traces(name='All Registered Voters', showlegend=True)
+    
+    trace_2 = px.histogram(filtered_df, x='birth_age',
+                           color_discrete_sequence=[cat_color],
+                           barmode='overlay',
+                           histnorm='probability density',
+                           labels=labels,
+                           opacity=0.75
+                      )
+    trace_2.update_traces(name='{} Voters'.format(group_cat),
+                          showlegend=True)
+    
+    fig.add_trace(trace_2.data[0])
+        
+    fig.update_yaxes(title='Density of Registered Voters')
+    
+
+    fig.update_layout(
+        title=title_dict,
+        legend = leg_dict
+        )
+
+    fig.update_yaxes(
+        title_font=ax_title_font_dict,
+        tickfont=ax_tick_font_dict
+    )
+
+    fig.update_xaxes(
+        title_font=ax_title_font_dict,
+        tickfont=ax_tick_font_dict
+    )
+
+
+    if save:
+        fig.write_html(fig_filepath+fig_name+'.html')
+
+    return fig
+
+
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+
+
 ##########################################################################
 ##########################################################################
 ##########################################################################
@@ -2515,34 +3382,20 @@ if side_main_radio=='Voter Registration':
 
     side_reg_demog_select_2 = st.sidebar.checkbox(
         label='Two Variables',
-        value=False,
+        value=True,
         key='registr_select_2'
     )
 
-    side_registr_2 = st.sidebar.subheader(
-        'Explore Registration Status'
-    )
-
-    # side_reg_stat_distr = st.sidebar.checkbox(
-    #     label='Registration Status Distribution',
-    #     value=True,
-    #     key='reg_stat_distr'
-    # )
-
-    side_reg_stat_by_grp = st.sidebar.checkbox(
-        label='By Category',
-        value=True,
-        key='reg_stat_by_grp'
-    )
-
-    side_registr_3 = st.sidebar.subheader(
-        'Explore Age Distributions'
-    )
-
     side_age_distr = st.sidebar.checkbox(
-        label='By Category',
+        label='Age Distributions',
         value=True,
-        key='reg_stat_age'
+        key='registr_stat_age'
+    )
+
+    side_registr_dt = st.sidebar.checkbox(
+        label='Registration Date',
+        value=True,
+        key='registr_date'
     )
     
 
@@ -3076,8 +3929,144 @@ if side_main_radio=='Voter Registration':
 ##########################################################################
 ##########################################################################
 ##########################################################################
-###### Section for exploring by year
 ##########################################################################
 ##########################################################################
-    st.title('This page coming soon!')
+##########################################################################
+
+    if side_reg_demog_select_1:
+        ##########################################################################
+        ##########################################################################
+        ##########################################################################
+        ## Basic bar or pie chart for a single variable
+        # Define container for section
+        single_var_demog = st.beta_container()
+        single_var_demog.header('Explore registered voter demographics:')
+        single_var_demog.subheader('Explore one variable at a time:')
+        svd_col_1, svd_col_2 = single_var_demog.beta_columns(2)
+
+        # Choose chart type
+        svd_chart_type = svd_col_2.radio(
+            label='Chart type: ',
+            options = ['Bar', 'Pie'],
+            index=0,
+            key='svd_chart_type'
+        )
+
+        # Choose column to group by/ investigate
+        svd_col_opt = [
+            'voter_status_desc', 'gen_grp',
+            'party_grp', 'gender_code', 'race_grp',
+            'birth_reg_other', 'drivers_lic', 'city_grp'
+        ]
+        svd_group_col = svd_col_1.selectbox(
+            label='See the distribution of: ',
+            options = svd_col_opt,
+            index=0,
+            format_func=format_col_names,
+            key='svd_col'
+        )
+        if svd_chart_type=='Bar':
+            # Plot basic histogram
+            svd_hist = registr_hist(
+                uc_vreg_df, svd_group_col
+            )
+            single_var_demog.plotly_chart(svd_hist, use_container_width=True)
+        
+        if svd_chart_type=='Pie':
+            # Plot basic pie chart
+            svd_pie = registr_pie(
+                uc_vreg_df, svd_group_col
+            )
+            single_var_demog.plotly_chart(svd_pie, use_container_width=True)
+
+        single_var_demog.markdown('***')
+
+
+    if side_reg_demog_select_2:
+        ##########################################################################
+        ##########################################################################
+        ##########################################################################
+        ## Stacked bar chart grouped by 2 columns
+        # Define container for section
+        grp_bar_demog = st.beta_container()
+        grp_bar_demog.header('Explore registered voter demographics:')
+        grp_bar_demog.subheader('Break down trends across 2 variables at a time:')
+        gbd_col_1, gbd_col_2 = grp_bar_demog.beta_columns(2)
+
     
+        # Choose 1st column to group by/ investigate
+        gbd_col_1_opt = [
+            'voter_status_desc', 'gen_grp',
+            'party_grp', 'gender_code', 'race_grp',
+            'birth_reg_other', 'drivers_lic', 'city_grp'
+        ]
+
+        gbd_group_col_1 = gbd_col_1.selectbox(
+            label='Group by: ',
+            options = gbd_col_1_opt,
+            index=0,
+            format_func=format_col_names,
+            key='gbd_col_1'
+        )
+
+        # Choose 2nd column to group by/ investigate
+        if gbd_group_col_1=='voter_status_desc':
+            gbd_col_2_opt=[
+                'gen_grp',
+                'party_grp', 'gender_code', 'race_grp',
+                'birth_reg_other', 'drivers_lic', 'city_grp'
+            ]
+        
+        else:
+            gbd_col_2_opt=[]
+            for opt in gbd_col_1_opt:
+                if opt != gbd_group_col_1:
+                    gbd_col_2_opt.append(opt)
+
+        gbd_group_col_2 = gbd_col_2.selectbox(
+                    label='Then by: ',
+                    options = gbd_col_2_opt,
+                    index=0,
+                    format_func=format_col_names,
+                    key='gbd_col_2'
+                )
+
+        # Plot stacked bar chart
+        gbd_bar = registr_stack_bar(
+            uc_vreg_df,
+            gbd_group_col_1,
+            gbd_group_col_2
+        )
+
+        grp_bar_demog.plotly_chart(gbd_bar, use_container_width=True)
+
+        grp_bar_demog.markdown('***')
+
+
+
+    if side_age_distr:
+        ##########################################################################
+        ##########################################################################
+        ##########################################################################
+        ## Age distribution comparisons
+        # Define container for section
+        age_distr_demog = st.beta_container()
+        age_distr_demog.header('Explore registered voter demographics:')
+        age_distr_demog.subheader('Compare age distributions:')
+        age_distr_demog.title('Section Coming Soon!')
+
+
+        age_distr_demog.markdown('***')
+
+    
+    if side_registr_dt:
+        ##########################################################################
+        ##########################################################################
+        ##########################################################################
+        ## Explore registration date trends
+        # Define container for section
+        registr_dt_demog = st.beta_container()
+        registr_dt_demog.header('Explore registered voter demographics:')
+        registr_dt_demog.subheader('Trends in registration date:')
+        registr_dt_demog.title('Section Coming Soon!')
+
