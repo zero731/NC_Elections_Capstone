@@ -3059,8 +3059,8 @@ def registr_stack_bar(df, group_col_1, group_col_2, title=None,
 
 
 @st.cache
-def compare_age_distr(df, group_col, group_cat, title=None,
-             template='seaborn', save=False, fig_name=None):
+def compare_age_distr(df, group_col, group_cats, all_reg_voters=True,
+                      title=None, template='seaborn'):
     """Takes a DataFrame and plots two Plotly histogram traces. First trace 
        represents age distribution of entire registered voter population. 
        Second trace groups the df by the column specified,
@@ -3069,20 +3069,20 @@ def compare_age_distr(df, group_col, group_cat, title=None,
     Args:
         df (DataFrame): A Pandas DataFrame
         group_col (str): Name of the df column by which to group for the second trace
+        group_cats (list of str): Names of category labels from group_col
+        all_reg_voters (bool, optional): Whether to plot a histogram trace
+            that represents the full population of registered voters. Defaults 
+            to True
         title (str, optional): Title for the resulting plot. If none is provided,
-            defaults to 'Distribution of Age by {group_col} ({group_cat})'.
-        template (str, optional): Plotly style template. Defaults to 'seaborn'.
-        save (bool, default=False): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
+            defaults to 'Distribution of Age by {group_col}'
+        template (str, optional): Plotly style template. Defaults to 'seaborn'
+        
 
     Returns:
         Figure: Plotly histogram of age and color-coded
             according to group_col. 
     """    
 
-
-    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -3225,41 +3225,61 @@ def compare_age_distr(df, group_col, group_cat, title=None,
                                         'Missing']})
         labels.update({'city_grp': 'City'})
         
-        
-        
-
-    filtered_df = df.loc[df[group_col]==group_cat]
-    cat_color = color_map[group_cat]
+    
+    filtered_df_0 = df.loc[df[group_col]==group_cats[0]]
+    cat_color_0 = color_map[group_cats[0]]
     
 
     labels.update({'birth_age': 'Age'})
-    fig = px.histogram(df, x='birth_age',
-                           title='Distribution of Age by {} ({})'.format(
-                               labels[group_col],
-                               group_cat
-                           ),
-                           color_discrete_sequence=['black'],
-                           barmode='overlay',
-                           histnorm='probability density',
-                           labels=labels,
-                           template=template
-                      )
-    fig.update_traces(name='All Registered Voters', showlegend=True)
     
-    trace_2 = px.histogram(filtered_df, x='birth_age',
-                           color_discrete_sequence=[cat_color],
-                           barmode='overlay',
-                           histnorm='probability density',
-                           labels=labels,
-                           opacity=0.75
+    fig = px.histogram(filtered_df_0, x='birth_age',
+                       color_discrete_sequence=[cat_color_0],
+                       barmode='overlay',
+                       histnorm='probability density',
+                       labels=labels,
+                       template=template,
+                       opacity=0.75
                       )
-    trace_2.update_traces(name='{} Voters'.format(group_cat),
-                          showlegend=True)
+    fig.update_traces(name='{} Voters'.format(group_cats[0]),
+                      showlegend=True)
     
-    fig.add_trace(trace_2.data[0])
+    if len(group_cats)>1:
+        for cat in group_cats[1:]:
+            filtered_df_cat = df.loc[df[group_col]==cat]
+            cat_color_cat = color_map[cat]
+
+            trace_cat = px.histogram(filtered_df_cat, x='birth_age',
+                                     color_discrete_sequence=[cat_color_cat],
+                                     barmode='overlay',
+                                     histnorm='probability density',
+                                     labels=labels,
+                                     opacity=0.75
+                                    )
+            trace_cat.update_traces(name='{} Voters'.format(cat),
+                                    showlegend=True)
+            
+            fig.add_trace(trace_cat.data[0])
+        
+        
+    if all_reg_voters:   
+        trace_all = px.histogram(df, x='birth_age',
+                                 color_discrete_sequence=['black'],
+                                 barmode='overlay',
+                                 histnorm='probability density',
+                                 labels=labels,
+                                 template=template
+                                )
+        trace_all.update_traces(name='All Registered Voters',
+                                showlegend=True)
+        
+    
+        fig.add_trace(trace_all.data[0])
         
     fig.update_yaxes(title='Density of Registered Voters')
-    
+    fig.update_layout(title='Distribution of Age by {}'.format(
+        labels[group_col]
+    )
+                     )
 
     fig.update_layout(
         title=title_dict,
@@ -3276,9 +3296,6 @@ def compare_age_distr(df, group_col, group_cat, title=None,
         tickfont=ax_tick_font_dict
     )
 
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
 
     return fig
 
