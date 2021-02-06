@@ -3938,7 +3938,7 @@ if side_main_radio=='Voter Turnout':
 ##########################################################################
 ##########################################################################
 ##########################################################################
-###### VOTER TURNOUT SECTION
+###### VOTER REGISTRATION SECTION
 ##########################################################################
 ##########################################################################
 if side_main_radio=='Voter Registration':
@@ -4070,7 +4070,53 @@ if side_main_radio=='Voter Registration':
         age_distr_demog = st.beta_container()
         age_distr_demog.header('Explore registered voter demographics:')
         age_distr_demog.subheader('Compare age distributions:')
-        age_distr_demog.title('Section Coming Soon!')
+        adistr_col_1, adistr_col_2 = age_distr_demog.beta_columns(2)
+
+        # Choosecolumn to group by/ investigate
+        adistr_col_opt = [
+            'voter_status_desc', 'party_grp', 'gender_code', 'race_grp',
+            'birth_reg_other', 'drivers_lic', 'city_grp'
+        ]
+
+        adistr_group_col = adistr_col_1.selectbox(
+            label='Group by: ',
+            options = adistr_col_opt,
+            index=1,
+            format_func=format_col_names,
+            key='adistr_col'
+        )
+
+        # Choose categories to display
+        # Choose category from column 2 to investigate
+        adistr_col_cat_opt = ['All']
+        for opt in adistr_col_opt:
+            if adistr_group_col==opt:
+                for label in uc_vreg_df[adistr_group_col].unique():
+                    adistr_col_cat_opt.append(label)
+
+        adistr_col_cats = adistr_col_2.multiselect(
+            label='Choose categories: ',
+            options = adistr_col_cat_opt,
+            default=['All', adistr_col_cat_opt[2]],
+            format_func=format_cat_names,
+            key='adistr_cats'
+        )
+
+        # Plot age distributions
+        if 'All' in adistr_col_cats:
+            all_reg_voters = True
+            adistr_col_cats.remove('All')
+        else:
+            all_reg_voters = False
+
+        adistr_hist = compare_age_distr(
+            uc_vreg_df,
+            adistr_group_col,
+            adistr_col_cats,
+            all_reg_voters=all_reg_voters
+        )
+
+        age_distr_demog.plotly_chart(adistr_hist, use_container_width=True)
 
 
         age_distr_demog.markdown('***')
