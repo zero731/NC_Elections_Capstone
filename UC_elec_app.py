@@ -99,8 +99,7 @@ def norm_label(arg):
 
 
 @st.cache
-def basic_hist(df, year, col, title=None,
-                  template='seaborn', save=False, fig_name=None):
+def basic_hist(df, year, col, title=None, template='seaborn'):
     """Takes a DataFrame with a year column, filters the DataFrame to the
         provided election year, and returns a color-coded Plotly histogram 
         for the provided column.
@@ -112,16 +111,10 @@ def basic_hist(df, year, col, title=None,
         title (str, optional): Title for the resulting plot. If none is provided,
             defaults to 'Distribution of labels[{col}] in {year} General Election'.
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
-        save (bool, default=False): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
 
     Returns:
         Figure: Returns Plotly histogram of provided column for the specified year.
     """    
-
-
-    fig_filepath = 'Figures/'
 
     title_font_dict = {
         'family':'Arial Black',
@@ -329,10 +322,6 @@ def basic_hist(df, year, col, title=None,
         tickfont=ax_tick_font_dict
     )
     
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-    
     return fig
 
 
@@ -347,8 +336,7 @@ def basic_hist(df, year, col, title=None,
 
 @st.cache
 def grp_hist(df, year, group_col_1, group_col_2, title=None,
-             barmode='group', histnorm=None,
-             template='seaborn', save=False, fig_name=None):
+             barmode='group', histnorm=None, template='seaborn'):
     """Takes a DataFrame with a year column, groups the df by the first
         column specified, then color-codes by the second provided column
         to create a Plotly histogram for the specified election year.
@@ -364,17 +352,12 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
         histnorm (str, optional): Plotly histnorm parameter, but only takes None or 'percent'.
              Defaults to None.
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
-        save (bool, default=False): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
 
     Returns:
         Figure: Plotly histogram grouped by group_col_1 and color-coded
             according to group_col_2 for the specified election year. 
     """    
 
-
-    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -588,10 +571,6 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
         tickfont=ax_tick_font_dict
     )
 
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-
     return fig
 
 
@@ -606,8 +585,7 @@ def grp_hist(df, year, group_col_1, group_col_2, title=None,
 
 @st.cache
 def stack_grp_hist(df, year, group_col_1, group_col_2, title=None, 
-                   percent=None, template='seaborn',
-                   save=False, fig_name=None):
+                   percent=None, template='seaborn'):
     """Takes a DataFrame with a year column, groups the df by the first
         column specified, then color-codes by the second provided column
         to create a stacked Plotly bar chart for the specified election year.
@@ -625,17 +603,12 @@ def stack_grp_hist(df, year, group_col_1, group_col_2, title=None,
         percent (str, optional): If 'percent', plots bars as percentages.
             If None, plots as raw counts. Defaults to None.
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
-        save (bool, optional): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
 
     Returns:
         Figure: Plotly stacked bar chart grouped by group_col_1 and color-coded
             according to group_col_2 for the specified election year. 
     """    
 
-
-    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -878,10 +851,6 @@ def stack_grp_hist(df, year, group_col_1, group_col_2, title=None,
         tickfont=ax_tick_font_dict
     )
 
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-
     return fig
 
 
@@ -896,7 +865,7 @@ def stack_grp_hist(df, year, group_col_1, group_col_2, title=None,
 
 @st.cache
 def grp_yr_hist(df, group_col_1, title=None, barmode='group',
-                histnorm=None, template='seaborn', save=False, fig_name=None):
+                histnorm=None, template='seaborn'):
     """Takes a DataFrame with a year column, groups the df by the first
         group_col_1, then color-codes by election year to create a Plotly histogram.
 
@@ -917,9 +886,6 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
         Figure: Plotly histogram grouped by group_col_1 and color-coded
             according to group_col_2 for the specified election year. 
     """    
-
-
-    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -1085,9 +1051,6 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
     )
 
 
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-
     return fig
 
 
@@ -1104,8 +1067,7 @@ def grp_yr_hist(df, group_col_1, title=None, barmode='group',
 def multi_yr_hist(df, group_col_1, group_col_2,
                   facet_feat='year', facet_spacing=0.05,
                   title=None, barmode='group', histnorm=None,
-                  template='seaborn', width=1000, height=450,
-                  save=False, fig_name=None):
+                  template='seaborn', width=1000, height=450):
     """Takes a DataFrame with a year column, groups the df by the first
         column specified, then color-codes by the second provided column
         to create a Plotly histogram subplot for each election year.
@@ -1126,17 +1088,11 @@ def multi_yr_hist(df, group_col_1, group_col_2,
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
         width (int, optional): Width of figure. Defaults to 1000.
         height (int, optional): Height of figure. Defaults to 450.
-        save (bool, default=False): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
 
     Returns:
         Figure: Plotly histograms grouped by group_col_1 and color-coded
             according to group_col_2, with one plot for each year. 
     """    
-
-
-    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -1378,10 +1334,6 @@ def multi_yr_hist(df, group_col_1, group_col_2,
         ann_dict
     )
 
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-
     return fig
 
 
@@ -1398,8 +1350,7 @@ def multi_yr_hist(df, group_col_1, group_col_2,
 def stack_multi_yr_hist(df, group_col_1, group_col_2,
                         facet_feat='year', facet_spacing=0.05,
                         title=None, percent=None,
-                        template='seaborn', width=1000, height=450,
-                        save=False, fig_name=None):
+                        template='seaborn', width=1000, height=450):
     """Takes a DataFrame with a year column, groups the df by the first
         column specified, then color-codes by the second provided column
         to create a Plotly stacked bar chart subplot, one for each election 
@@ -1420,17 +1371,11 @@ def stack_multi_yr_hist(df, group_col_1, group_col_2,
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
         width (int, optional): Width of figure. Defaults to 1000.
         height (int, optional): Height of figure. Defaults to 450.
-        save (bool, optional): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
 
     Returns:
         Figure: Plotly stacked bar charts grouped by group_col_1 and color-coded
             according to group_col_2, with one plot for each year. 
     """    
-
-
-    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -1715,10 +1660,6 @@ def stack_multi_yr_hist(df, group_col_1, group_col_2,
         ann_dict
     )
 
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-
     return fig
 
 
@@ -1733,7 +1674,7 @@ def stack_multi_yr_hist(df, group_col_1, group_col_2,
 
 @st.cache
 def basic_pie(df, year, col, title=None,
-                  template='seaborn', showlegend=True, save=False, fig_name=None):
+                  template='seaborn', showlegend=True):
     """Takes a DataFrame with a year column, filters the DataFrame to the
         provided election year, and returns a Plotly pie chart for the provided
         column.
@@ -1747,17 +1688,13 @@ def basic_pie(df, year, col, title=None,
         template (str, optional): [description]. Defaults to 'seaborn'.
         showlegend (bool, optional): Whether to display the figure legend.
             Defaults to True.
-        save (bool, default=False): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
+    
 
     Returns:
         Figure: Plotly pie chart color-coded according to col
             for the specified election year. 
     """    
 
-
-    fig_filepath = 'Figures/'
     
     title_dict = {
         'font' : {
@@ -1918,9 +1855,6 @@ def basic_pie(df, year, col, title=None,
         showlegend=showlegend
     )
 
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
     
     return fig
 
@@ -1936,7 +1870,7 @@ def basic_pie(df, year, col, title=None,
 
 @st.cache
 def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
-                  template='seaborn', showlegend=True, save=False, fig_name=None):
+                  template='seaborn', showlegend=True):
     """Takes a DataFrame with a year column, filters to the specified election 
         year, groups the df by the first column specified, filters to include 
         only the specified category from that column, then displays the composition 
@@ -1955,16 +1889,11 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
         showlegend (bool, optional): Whether to display the figure legend. 
             Defaults to True.
-        save (bool, default=False): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
-
+        
     Returns:
         Figure: Plotly pie chart grouped by group_col_1, filtered to include only
             col_1_cat, and broken down into categories from group_col_2.
     """    
-
-    fig_filepath = 'Figures/'
 
     
     title_dict = {
@@ -2138,10 +2067,6 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
         title=title_dict,
         legend=leg_dict
     )
-
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
     
     return fig
 
@@ -2156,8 +2081,7 @@ def grp_pie(df, year, group_col_1, group_col_2, col_1_cat, title=None,
 @st.cache
 def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
                   facet_feat='year', title=None,
-                  template='seaborn', width=900, height=450,
-                  save=False, fig_name=None):
+                  template='seaborn', width=900, height=450):
     """Takes a DataFrame with a year column, groups the df by the first column
         specified, filters to include only the specified category from that column,
         then displays the composition of that group as categories from the second
@@ -2177,9 +2101,6 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
         width (int, optional): Width dimension of the figure. Defaults to 900.
         height (int, optional): Height dimension of the figure. Defaults to 450.
-        save (bool, default=False): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
 
     Returns:
         Figure: Multiple Plotly pie charts, one for each year, grouped by group_col_1,
@@ -2187,8 +2108,6 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
          from group_col_2.
     """    
 
-    
-    fig_filepath = 'Figures/'
 
     title_dict = {
         'font' : {
@@ -2412,9 +2331,6 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
     )
 
 
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-    
     return fig
 
 
@@ -2437,7 +2353,7 @@ def multi_grp_pie(df, group_col_1, group_col_2, col_1_cat,
 
 @st.cache
 def registr_pie(df, col, title=None,
-                  template='seaborn', showlegend=True, save=False, fig_name=None):
+                  template='seaborn', showlegend=True):
     """Takes a DataFrame and returns a Plotly pie chart for the provided
         column in that DataFrame.
 
@@ -2456,8 +2372,6 @@ def registr_pie(df, col, title=None,
     Returns:
         Figure: Plotly pie chart color-coded according to col. 
     """    
-
-    fig_filepath = 'Figures/'
     
     title_dict = {
         'font' : {
@@ -2592,9 +2506,6 @@ def registr_pie(df, col, title=None,
     )
 
 
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-    
     return fig
 
 
@@ -2607,8 +2518,7 @@ def registr_pie(df, col, title=None,
 #################################################################################
 
 @st.cache
-def registr_hist(df, col, title=None,
-                  template='seaborn', save=False, fig_name=None):
+def registr_hist(df, col, title=None, template='seaborn'):
     """Takes a DataFrame and returns a color-coded Plotly histogram 
         for the provided column.
 
@@ -2618,15 +2528,10 @@ def registr_hist(df, col, title=None,
         title (str, optional): Title for the resulting plot. If none is provided,
             defaults to 'Distribution of labels[{col}] in {year} General Election'.
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
-        save (bool, default=False): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
 
     Returns:
         Figure: Returns Plotly histogram of provided column.
     """    
-
-    fig_filepath = 'Figures/'
 
     title_font_dict = {
         'family':'Arial Black',
@@ -2790,11 +2695,7 @@ def registr_hist(df, col, title=None,
         title_font=ax_title_font_dict,
         tickfont=ax_tick_font_dict
     )
-    
 
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
-    
     return fig
 
 
@@ -2809,8 +2710,7 @@ def registr_hist(df, col, title=None,
 
 @st.cache
 def registr_stack_bar(df, group_col_1, group_col_2, title=None, 
-                   percent=None, template='seaborn',
-                   save=False, fig_name=None):
+                   percent=None, template='seaborn'):
     """Takes a DataFrame, groups the df by the first
         column specified, then color-codes by the second provided column
         to create a stacked Plotly bar chart.
@@ -2822,17 +2722,12 @@ def registr_stack_bar(df, group_col_1, group_col_2, title=None,
         title (str, optional): Title for the resulting plot. If none is provided,
             defaults to 'labels[{group_col_1}] by labels[{group_col_2}]'.
         template (str, optional): Plotly style template. Defaults to 'seaborn'.
-        save (bool, optional): Whether to save the returned figure. Defaults to False.
-        fig_name (str, optional): What to name the file if the image is being saved.
-            Defaults to None.
 
     Returns:
         Figure: Plotly stacked bar chart grouped by group_col_1 and color-coded
             according to group_col_2. 
     """    
    
-    fig_filepath = 'Figures/'
-
     title_dict = {
         'font' : {
             'family':'Arial Black',
@@ -3042,9 +2937,6 @@ def registr_stack_bar(df, group_col_1, group_col_2, title=None,
         tickfont=ax_tick_font_dict
     )
 
-
-    if save:
-        fig.write_html(fig_filepath+fig_name+'.html')
 
     return fig
 
