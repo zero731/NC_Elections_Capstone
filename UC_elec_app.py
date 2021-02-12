@@ -3742,10 +3742,14 @@ if side_main_radio=='Voter Turnout':
                 key='m_grp_col_2'
             )
 
-        else: 
+        else:
+            myrhist_col_2_opt=[]
+            for opt in myrhist_col_opt:
+                if opt != myrhist_group_col_1:
+                    myrhist_col_2_opt.append(opt)
             myrhist_group_col_2 = myr_col_1.selectbox(
                     label='Then by: ',
-                    options = myrhist_col_opt,
+                    options = myrhist_col_2_opt,
                     index=1,
                     format_func=format_col_names,
                     key='m_grp_col_2'
