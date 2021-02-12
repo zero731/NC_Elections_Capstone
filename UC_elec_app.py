@@ -3560,10 +3560,14 @@ if side_main_radio=='Voter Turnout':
                 key='g_grp_col_2'
             )
 
-        else: 
+        else:
+            ghist_col_2_opt=[]
+            for opt in ghist_col_opt:
+                if opt != ghist_group_col_1:
+                    ghist_col_2_opt.append(opt)
             ghist_group_col_2 = syg_col_1.selectbox(
                     label='Then by: ',
-                    options = ghist_col_opt,
+                    options = ghist_col_2_opt,
                     index=0,
                     format_func=format_col_names,
                     key='g_grp_col_2'
