@@ -4015,15 +4015,21 @@ if side_main_radio=='Voter Registration':
             adistr_col_cats.remove('All')
         else:
             all_reg_voters = False
-
-        adistr_hist = compare_age_distr(
-            uc_vreg_df,
-            adistr_group_col,
-            adistr_col_cats,
-            all_reg_voters=all_reg_voters
-        )
-
-        age_distr_demog.plotly_chart(adistr_hist, use_container_width=True)
+        
+        if len(adistr_col_cats)==0:
+            age_distr_demog.subheader('''
+            Please select at least one group category to view.
+            ''')
+        
+        if len(adistr_col_cats)!=0:
+            adistr_hist = compare_age_distr(
+                uc_vreg_df,
+                adistr_group_col,
+                adistr_col_cats,
+                all_reg_voters=all_reg_voters
+            )
+        
+            age_distr_demog.plotly_chart(adistr_hist, use_container_width=True)
 
 
         age_distr_demog.markdown('***')
