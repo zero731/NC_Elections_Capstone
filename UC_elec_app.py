@@ -806,6 +806,21 @@ def stack_grp_hist(df, year, group_col_1, group_col_2, title=None,
     )
 
     if percent:
+        x_labels = cat_orders[group_col_1]
+        totals = []
+        for label in x_labels:
+            totals.append(len(df_slice.loc[df_slice[group_col_1]==label]))
+
+        total_labels = [
+            {'x': x,
+            'y': 108,
+            'text': f'{total:,}'+'<br>voters',
+            'showarrow': False,
+            'font_size':13,
+            'font_family': 'Arial Black'} 
+            for x, total in zip(x_labels, totals)
+        ]
+
         fig = px.bar(merge_slice, x=group_col_1, y='Percent',
                            color=group_col_2, color_discrete_map=color_map, 
                            title='{} by {} <br> in {} General Election'.format(
@@ -818,7 +833,7 @@ def stack_grp_hist(df, year, group_col_1, group_col_2, title=None,
                            template=template
                           )
         fig.update_yaxes(title='Percent of Registered Voters')
-    
+        fig.update_layout(annotations=total_labels)
     
     
     else:
@@ -1610,7 +1625,6 @@ def stack_multi_yr_hist(df, group_col_1, group_col_2,
                                facet_col_spacing=facet_spacing
                           )
         fig.update_yaxes(title='Percent of Registered Voters')  
-        
         
         
     else:
@@ -3350,7 +3364,8 @@ intro.markdown(
         """
         This dashboard allows you to interactively explore and visualize 
         trends in registered voter turnout in Union County, NC for the
-        2012, 2016, and 2020 general elections, as well as voter registration. 
+        2012, 2016, and 2020 general elections. You can also explore the demographics
+        of the current population of voters registered within the county. 
         Use the sidebar selection menu to choose to explore either voter turnout
         or voter registration and to display/hide sections.
         """
