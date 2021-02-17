@@ -5,8 +5,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-import schedule
-import time
 from datetime import datetime, timezone
 
 from clean_vreg_functions import *
