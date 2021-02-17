@@ -5,10 +5,52 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+import schedule
+import time
+from datetime import datetime, timezone
+
+from clean_vreg_functions import *
+
+# from request_ucvreg_data import vreg_data
+
+
+## Settings for app page
+st.set_page_config(
+    page_title='Union County Registered Voters',
+    layout='centered',
+    initial_sidebar_state='auto',
+    page_icon=':us:'
+)
 
 ## Import DataFrames
 gen_elecs_df = pd.read_csv('App_Data/UC_gen_elecs.gz')
-uc_vreg_df = pd.read_csv('App_Data/UC_vreg_Jan4.gz')
+
+# uc_vreg_df = pd.read_csv('App_Data/UC_vreg_Jan4.gz')
+url = "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter90.zip"
+
+sundays = 0
+if datetime.today().weekday() == 6:
+    sundays +=1
+
+@st.cache
+def get_ucvreg_data(url, sundays):
+    
+    uc_vreg_data = pd.read_table(url, encoding='ISO-8859-1')
+    uc_vreg_df = clean_vreg(uc_vreg_data)
+
+    dt_retrieved = datetime.now(
+        timezone.utc
+    ).astimezone().strftime(
+        "%m/%d/%Y %H:%M:%S %Z"
+    )
+
+    return(uc_vreg_df, dt_retrieved)
+
+
+uc_vreg_df, dt_retrieved = get_ucvreg_data(url, sundays)
+# uc_vreg_df = vreg_data.clean_df
+# uc_vreg_data.sched_retrieval(url)
+# uc_vreg_df = uc_vreg_data.clean_df
 
 ## Recast registr_dt as datetime variable
 uc_vreg_df['registr_dt'] = pd.to_datetime(uc_vreg_df['registr_dt'])
@@ -3222,14 +3264,6 @@ def compare_age_distr(df, group_col, group_cats, all_reg_voters=True,
 ##########################################################################
 ##########################################################################
 
-## Settings for app page
-st.set_page_config(
-    page_title='Union County Registered Voters',
-    layout='centered',
-    initial_sidebar_state='auto',
-    page_icon=':us:'
-)
-
 
 ##########################################################################
 ##########################################################################
@@ -3411,12 +3445,15 @@ if side_main_radio=='Voter Registration':
     )
     data_note.markdown(
         """
-        The voter registration data file currently in use was obtained 
-        from the NCSBE site on January 4th, 2021. However, in future updates 
-        to this dashboard, the file will be updated weekly to include the 
-        most recent data released by the NCSBE.
+        The voter registration data is updated weekly on Sundays to 
+        include the most recent data released by the NCSBE. The date and time
+        of the most recent retrieval is posted below. Note that it may be more 
+        recent than the last Sunday depending on when the app is
+        rebooted while I continue to update the sections.
         """
     )
+
+    data_note.markdown('**Data last retrieved: {}**'.format(dt_retrieved))
 
 plotly_note = intro.beta_expander(
     'Interactive Graph Functionality:'
