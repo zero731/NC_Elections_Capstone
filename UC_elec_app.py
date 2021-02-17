@@ -26,12 +26,12 @@ gen_elecs_df = pd.read_csv('App_Data/UC_gen_elecs.gz')
 # uc_vreg_df = pd.read_csv('App_Data/UC_vreg_Jan4.gz')
 url = "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter90.zip"
 
-sundays = 0
+sunday = 0
 if datetime.today().weekday() == 6:
-    sundays +=1
+    sunday = datetime.now(timezone.utc).strftime("%m/%d/%Y")
 
 @st.cache
-def get_ucvreg_data(url, sundays):
+def get_ucvreg_data(url, sunday):
     
     uc_vreg_data = pd.read_table(url, encoding='ISO-8859-1')
     uc_vreg_df = clean_vreg(uc_vreg_data)
@@ -45,7 +45,7 @@ def get_ucvreg_data(url, sundays):
     return(uc_vreg_df, dt_retrieved)
 
 
-uc_vreg_df, dt_retrieved = get_ucvreg_data(url, sundays)
+uc_vreg_df, dt_retrieved = get_ucvreg_data(url, sunday)
 # uc_vreg_df = vreg_data.clean_df
 # uc_vreg_data.sched_retrieval(url)
 # uc_vreg_df = uc_vreg_data.clean_df
