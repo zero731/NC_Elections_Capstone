@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 from clean_vreg_functions import *
 
-# from request_ucvreg_data import vreg_data
+# import request_ucvreg_data as rud
 
 
 ## Settings for app page
@@ -46,13 +46,12 @@ def get_ucvreg_data(url, sunday):
 
 
 uc_vreg_df, dt_retrieved = get_ucvreg_data(url, sunday)
-# uc_vreg_df = vreg_data.clean_df
+# uc_vreg_df = rud.vreg_data.clean_df
 # uc_vreg_data.sched_retrieval(url)
 # uc_vreg_df = uc_vreg_data.clean_df
 
 ## Recast registr_dt as datetime variable
 uc_vreg_df['registr_dt'] = pd.to_datetime(uc_vreg_df['registr_dt'])
-
 
 
 ##########################################################################
@@ -3443,11 +3442,8 @@ if side_main_radio=='Voter Registration':
     )
     data_note.markdown(
         """
-        The voter registration data is updated weekly on Sundays to 
-        include the most recent data released by the NCSBE. The date and time
-        of the most recent retrieval is posted below. Note that it may be more 
-        recent than the last Sunday depending on when the app is
-        rebooted while I continue to update the sections.
+        The voter registration data is obtained from the NCSBE. The date and time
+        of the most recent retrieval is posted below.
         """
     )
 
