@@ -30,7 +30,7 @@ url = "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter90.zip"
 # if datetime.today().weekday() == 6:
 #     sunday = datetime.now(timezone.utc).strftime("%m/%d/%Y")
 
-# @st.cache
+@st.cache
 def get_ucvreg_data(url):
     
     uc_vreg_data = pd.read_table(url, encoding='ISO-8859-1')
