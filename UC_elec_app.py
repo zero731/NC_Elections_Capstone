@@ -3346,11 +3346,11 @@ if side_main_radio=='Voter Registration':
         key='registr_stat_age'
     )
 
-    side_registr_dt = st.sidebar.checkbox(
-        label='Registration Date',
-        value=True,
-        key='registr_date'
-    )
+    # side_registr_dt = st.sidebar.checkbox(
+    #     label='Registration Date',
+    #     value=True,
+    #     key='registr_date'
+    # )
     
 
 st.sidebar.write('')
@@ -4074,14 +4074,14 @@ if side_main_radio=='Voter Registration':
         age_distr_demog.markdown('***')
 
     
-    if side_registr_dt:
-        ##########################################################################
-        ##########################################################################
-        ##########################################################################
-        ## Explore registration date trends
-        # Define container for section
-        registr_dt_demog = st.beta_container()
-        registr_dt_demog.header('Explore registered voter demographics:')
-        registr_dt_demog.subheader('Trends in registration date:')
-        registr_dt_demog.title('Section Coming Soon!')
+    # if side_registr_dt:
+    #     ##########################################################################
+    #     ##########################################################################
+    #     ##########################################################################
+    #     ## Explore registration date trends
+    #     # Define container for section
+    #     registr_dt_demog = st.beta_container()
+    #     registr_dt_demog.header('Explore registered voter demographics:')
+    #     registr_dt_demog.subheader('Trends in registration date:')
+    #     registr_dt_demog.title('Section Coming Soon!')
 
